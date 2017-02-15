@@ -1,0 +1,72 @@
+#! /usr/bin/env python
+# _*_ coding: UTF-8 _*_
+
+
+#import modules
+import sys, time, datetime, os, csv
+sys.path.append('/home/amigos/NASCORX-master/base/')
+import Cryo
+
+class mixertune(object):
+    '''
+    DESCRIPTION
+    ================
+    This class tunes the SIS mixer.
+
+    ARGUMENTS
+    ================
+    Nothing.
+    '''
+    def __init__(self):
+        self.mix = Cryo.mixer()
+        self.spec = XFFTS.xffts()
+
+    def searching(self, Vrange=[0, 10000], Vres=100, Ires=10, logpath='/home/amigos/data/SIS/'):
+        '''        
+        DESCRIPTION
+        ================
+        This function measures SIS mixer noise.
+        
+        ARGUMENTS
+        ================
+        1. Vrange: searching area of SIS voltage [uV]
+            Number: 0 -- 50,000 [uV]
+            Type: list[int, int]
+            Default: [0, 10000]
+        2. Vres: searching resolutin of SIS voltage [uV]
+            Number: 1 -- 50,000 [uV]
+            Type: int
+            Default: 100
+        3. Ires: searching resolutin of LO attenuator [mA]
+            Number: 1 -- 100 [mA]
+            Type: int
+            Default: 10
+        4. logpath: directory path of the log file
+            Type: string
+            Default: '/home/amigos/data/rxmonitor/'
+
+        RETURNS
+        ================
+        Nothing.
+        '''        
+        utc = datetime.datetime.utcnow()
+        ts = utc.strftime('%Y%m%d')
+        for v in range(Vrange[0], Vrange[1], Vres):
+            if os.path.isfile(logpath+'mixertune%s.csv'%(ts)) == 0:
+                f = open(logpath+'mixertune%s.csv'%(ts), 'w')
+                writecsv = csv.writer(f)
+                writecsv.writerow(['#UTC', 'voltage[mV]', 'current[uA]', 'Y-factor[dB]'])
+                f.close()
+            else:
+                self.mix.set_sisv(voltage=v*1e-6)
+                for i in range(0, 100, Ires):
+                    self.mix.set_loatt(att=i)
+                    ret1 = self.mix.monitor_sis()
+                    ret2 = self.sepc.yfactor()
+                    f = open(logpath+'mixertune%s.csv'%(ts), 'a')
+                    writecsv = csv.writer(f)
+                    writecsv.writerow([ret1, ret2])
+                    f.close()
+        return
+
+#written by K.Urushihara

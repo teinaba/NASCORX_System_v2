@@ -1,0 +1,65 @@
+#! /usr/bin/env python
+# _*_ coding: UTF-8 _*_
+
+#import modules
+import urllib2
+
+class tr72w(object):
+    '''
+    DESCRIPTION
+    ================
+    This class cntrols the thermometer TR-72W.
+
+    ARGUMENTS
+    ================
+    1. IP: IP address of the TR-72W
+        Type: string
+        Default: '192.168.100.1'
+    '''
+
+    def __init__(self, IP='192.168.100.1'):
+        self.sock = urllib2.Request('http://'+IP+'/B/crrntdata/cdata.txt')
+        
+    def temp(self):
+        """        
+        DESCRIPTION
+        ================
+        This function queries the room temperature.
+        
+        ARGUMENTS
+        ================
+        Nothing.        
+        
+        RETURNS
+        ================
+        1. The room temperature [K]: float type
+        """
+        res = urllib2.urlopen(self.sock)
+        page = res.read()
+        raw_data = page.split('\r\n')
+        raw_T = raw_data[5].split('=')
+        temperature = float(raw_T[1])
+        return temperature
+
+    def hum(self):
+        """
+        DESCRIPTION
+        ================
+        This function queries the room humidity.
+        
+        ARGUMENTS
+        ================
+        Nothing.        
+        
+        RETURNS
+        ================
+        1. The room humidity [%]: float type        
+        """
+        res = urllib2.urlopen(self.sock)
+        page = res.read()
+        raw_data = page.split('\r\n')
+        raw_H = raw_data[6].split('=')
+        humidity = float(raw_H[1])
+        return humidity
+
+#written by K.Urushihara

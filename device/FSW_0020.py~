@@ -1,0 +1,240 @@
+#! /usr/bin/env python
+# _*_ coding: UTF-8 _*_
+
+#import modules
+import time, sys
+sys.path.append('/home/amigos/pymeasure2-master/')
+import pymeasure
+
+class fsw_0020(object):
+    '''
+    DESCRIPTION
+    ================
+    This class cntrols the FSW0020.
+
+    ARGUMENTS
+    ================
+    1. IP: IP address of the FSW0020
+        Type: string
+        Default: '192.168.100.1'
+    2. port: port number of the FSW0020
+        Type: int
+        Default: 10001
+    '''
+
+    def __init__(self, IP='192.168.100.1', port=10001):
+        self.IP = IP
+        self.port = port
+        self.com = pymeasure.ethernet(self.IP, self.port)
+        self.sg = pymeasure.Phasematrix.FSW0020(self.com)
+
+    def set_sg(self, freq, power):
+        """        
+        DESCRIPTION
+        ================
+        This function sets the frequency and power of the SG.
+        
+        ARGUMENTS
+        ================
+        1. freq: CW frequency [GHz]
+            Number: 0.5-20 
+            Type: float
+            Default: nothing
+        2. power: CW power [dBm]
+            Number: -10-+13
+            Type: float
+            Default: nothing
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        if 0.5<=freq<=20.0 and -10.0<=power<=13.0:
+            self.sg.freq_set(freq, 'GHz')
+            self.sg.power_set(power, 'dBm')
+            self.sg.output_set('ON')
+        else:
+            print('!!!!ERROR!!!!')
+            print('FREQUENCY(0.5-20GHz): '+str(freq))
+            print('POWER(-10-+13dBm): '+str(power))
+            quit()
+        return
+    
+    def close_sg(self):
+        """        
+        DESCRIPTION
+        ================
+        This function turnes off the RF output.
+        
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.sg.output_set('OFF')
+        return
+        
+    def get_status(self):
+        """        
+        DESCRIPTION
+        ================
+        This function queries the frequency, power and output status.
+        
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. freq: CW frequency [GHz]
+            Type: float
+        2. power: CW power [dBm]
+            Type: float
+        3. onoff: RF ON/OFF status
+            Type: int(1: ON, 0: OFF)
+        4. ref: reference source internal or external
+            Type: string (INT/EXT)
+        5. refout: reference signal output state
+            Type: int (1: ON, 0: OFF)
+        6. temp: temperature of the housing [deg C]
+            Type: float
+        """
+        ret1 = self.sg.freq_query()
+        ret2 = self.sg.power_query()
+        ret3 = self.sg.output_query()
+        ref = self._query_ref_()
+        refout = self._query_refout_()
+        temp = self._query_temp_()
+        onoff = ret3.startswith('OFF')
+        if onoff == 1:
+            onoff = 0
+        else:
+            onoff = 1
+        freq = float(ret1)/1e+12
+        power = float(ret2)
+        return [freq, power, onoff, ref, refout, temp]
+
+    def set_ref(self, source='INT'):
+        """        
+        DESCRIPTION
+        ================
+        This function selects the reference source.
+        
+        ARGUMENTS
+        ================
+        1. source: reference source
+            Number: 'INT' or 'EXT'
+            Type: string
+            Default: 'INT'
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        if source=='EXT':
+            self.com.send('ROSC:SOUR EXT')
+        else:
+            self.com.send('ROSC:SOUR INT')
+        return
+
+    def _query_ref_(self):
+        """        
+        DESCRIPTION
+        ================
+        This function queries the reference sources.
+        
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. ref: reference source INTERNAL or EXTERNAL.
+            Type: string (INT/EXT)
+        """
+        self.com.send('ROSC:SOUR?')
+        ret = self.com.readline()
+        ref = ret.startswith('EXT')
+        if ref == 1:
+            ref = 'EXT'
+        else:
+            ref = 'INT'
+        return ref
+
+    def set_refout(self, onoff=0):
+        """        
+        DESCRIPTION
+        ================
+        This function turns on or off the reference signal output.
+        
+        ARGUMENTS
+        ================
+        1. onoff: reference signal on or off
+            Number: 1 or 0
+            Type: int
+            Default: 0
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        if onoff==1:
+            self.com.send('OUTP:ROSC:STAT ON')
+        else:
+            self.com.send('OUTP:ROSC:STAT OFF')
+        return
+
+    def _query_refout_(self):
+        """        
+        DESCRIPTION
+        ================
+        This function queries the reference signal output state.
+        
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. onoff: reference signal output state
+            Type: int (1 or 0)
+        """
+        self.com.send('OUTP:ROSC:STAT?')
+        ret = self.com.readline()
+        frag = ret.startswith('OFF')
+        if frag==1:
+            onoff = 0
+        elif frag==0:
+            onoff = 1
+        else:
+            print('!!!!ERROR!!!!')
+            print('_query_refout_() has invalid value.')
+        return onoff
+
+    def _query_temp_(self):
+        """        
+        DESCRIPTION
+        ================
+        This function queries the temperature.
+        !!!!WARNING!!!!
+            *Operating temperature is 0 to 55 deg C.
+            *You must use heat sink to operate.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. temp: temperature [deg C]
+            Type: float
+        """
+        self.com.send('DIAG:MEAS? 21')
+        ret = self.com.readline()
+        temp = float(ret)
+        return temp
+
+#written by K.Urushihara
