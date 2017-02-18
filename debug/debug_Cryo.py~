@@ -81,7 +81,7 @@ def debug_sis3():
     plt.plot([V_list[0], V_list[-1]], [V_list[0], V_list[-1]*1e+2], color='green', label='ideal')
     plt.xlim(V_list[0], V_list[-1])
     plt.ylim(V_list[0], V_list[-1]*1e+2)
-    plt.title('Vmix - Vmon (R=50ohm)')
+    plt.title('Vmix - Vmon (R=51ohm)')
     plt.xlabel('Mixer Voltage [mV]')
     plt.ylabel('Monitor Voltage [mV]')
     plt.grid(True)

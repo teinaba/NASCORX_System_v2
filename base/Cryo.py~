@@ -42,7 +42,7 @@ class mixer(object):
         self.ad = CPZ3177.cpz3177(dev=self.nsisad[1])
         self.dacc.set_Irange(mode='DA_0_100mA')
         self.ad.set_mode(mode='diff')
-        self.ad.set_input_range(Vrange='AD_10V')
+        self.ad.set_input_range(Vrange='AD_5V')
 
     def _board_search_(self, device):
         f = open(self.device_table, 'r')
@@ -80,7 +80,7 @@ class mixer(object):
         '''
         Vmix_Limit = 30.0 # mV
         ch_range = range(16) #numberes of channel
-        Vda = (1.0/3.0)*Vmix #mixer bias[mV] --> D/A voltage[V]
+        Vda = (1.0/3.0)*float(Vmix) #mixer bias[mV] --> D/A voltage[V]
         if 0.0<=Vmix<=Vmix_Limit:
             if ch in ch_range:
                 self.davc.set_voltage(voltage=Vda, ch=ch)
@@ -133,8 +133,8 @@ class mixer(object):
         '''
         ret = self.ad.query_input()
         Vmix_mon = []
-        for i in ret:
-            Vmix_mon.append(i/2.0)
+        for i in range(len(ret)):
+            Vmix_mon.append(float(ret[i]))
         return Vmix_mon
 
     def set_loatt(self, att, ch):
@@ -160,7 +160,7 @@ class mixer(object):
         '''
         if 0.0<=att<=100.0:
             if 0<=ch<=7:
-                self.dacc.set_current(current=att*1e-3, ch=ch)
+                self.dacc.set_current(current=float(att)*1e-3, ch=ch)
                 self.dacc.set_output(onoff=1)
             else:
                 print('!!!!ERROR!!!!')

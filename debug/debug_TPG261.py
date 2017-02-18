@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys, time
-sys.path.append('/home/amigos/NASCORX-master/device/')
+sys.path.append('/home/amigos/NASCORX_System-master/device/')
 import TPG261
 
 P = TPG261.tpg261(IP='192.168.100.112', port=9600)

@@ -78,7 +78,7 @@ def IVtrace(ch, Vgap, Vrange=[0, 12], average=5, pngpath='/home/amigos/data/SIS/
     plt.plot(V_mon, I_mon, linestyle='-', color='green', linewidth=1.0, label='interpolation')
     plt.title('SIS Mixer I-V '+t.strftime('%Y/%m/%d/ %H:%M:%S'))
     plt.xlim(0, V_mon.max())
-    plt.ylim(0, I_mon.max())
+    plt.ylim(I_mon.min(), I_mon.max())
     plt.xlabel('Mixer Voltage [mV]')
     plt.ylabel('Mixer Current [uA]')
     plt.grid(True)

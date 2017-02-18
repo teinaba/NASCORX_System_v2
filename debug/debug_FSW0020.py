@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys, time
-sys.path.append('/home/amigos/NASCORX-master/device/')
+sys.path.append('/home/amigos/NASCORX_System-master/device/')
 import FSW_0020
 
 SG = FSW_0020.fsw_0020(IP='192.168.100.215', port=10001)

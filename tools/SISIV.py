@@ -6,7 +6,7 @@
 import time, sys, datetime, os, csv
 import matplotlib.pyplot as plt
 import numpy as np
-sys.path.append('/home/amigos/NASCORX-master/base/')
+sys.path.append('/home/amigos/NASCORX_System-master/base/')
 import Cryo
 
 def IVtrace(ch, Vgap, Vrange=[0, 12], average=5, pngpath='/home/amigos/data/SIS/IV/'):

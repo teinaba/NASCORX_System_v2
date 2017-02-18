@@ -60,7 +60,7 @@ def linearity(average=5, pngpath='/home/amigos/data/linearity/'):
     plt.xlabel('Attenuation [dB]')
     plt.ylabel('Power Level [dBm]')
     plt.grid(True)
-    plt.legend(loc='upper left')
+    plt.legend(loc='upper right')
     plt.savefig(pngpath+filename)
     plt.show()
  

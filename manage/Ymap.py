@@ -4,9 +4,9 @@
 
 #import modules
 import sys, time, datetime, os, csv, numpy
-sys.path.append('/home/amigos/NASCORX-master/base/')
+sys.path.append('/home/amigos/NASCORX_System-master/base/')
 import Cryo, Lo
-sys.path.append('/home/amigos/NASCORX-master/device/')
+sys.path.append('/home/amigos/NASCORX_System-master/device/')
 import ML2437A, CPZ7204
 
 class ymap(object):

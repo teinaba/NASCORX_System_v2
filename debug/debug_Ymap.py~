@@ -8,7 +8,7 @@ import Ymap
 m = Ymap.ymap()
 
 def debug():
-    m.makemap(LOrange=[85, 120], LOres=15, Vrange=[1000, 5000], Vres=1000, Irange=[50, 90], Ires=20)
+    m.makemap(LOrange=[85, 120], LOres=15, Vrange=[6, 8], Vres=1, Irange=[50, 90], Ires=20)
 
 debug()
 

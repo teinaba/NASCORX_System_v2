@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys, time
-sys.path.append('/home/amigos/NASCORX-master/device/')
+sys.path.append('/home/amigos/NASCORX_System-master/device/')
 import A11713C
 
 driver = A11713C.a11713c(IP='192.168.100.114')

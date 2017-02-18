@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys, time
-sys.path.append('/home/amigos/NASCORX-master/device/')
+sys.path.append('/home/amigos/NASCORX_System-master/device/')
 import CPZ340516
 
 DA = CPZ340516.cpz340516(dev=1)

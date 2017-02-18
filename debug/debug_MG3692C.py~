@@ -5,7 +5,7 @@ import sys, time
 sys.path.append('/home/amigos/NASCORX-master/device/')
 import MG3692C
 
-SG = MG3692C.mg3692c(IP='192.168.100.113', GPIB=5)
+SG = MG3692C.mg3692c(IP='192.168.100.113', GPIB=14)
 
 def debug_freq():
     freq = [2.0, 5.5, 10, 18.5, 20]

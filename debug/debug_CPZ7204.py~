@@ -9,7 +9,9 @@ mtr = CPZ7204.cpz7204(dev=1)
 
 #mtr.set_home()
 
-mtr.rot_angle(speed=3000, angle=20)
+for i in range(10):
+    mtr.rot_angle(speed=3000, angle=90)
+    mtr.rot_angle(speed=3000, angle=-90)
 
 #mtr.go_home()
 

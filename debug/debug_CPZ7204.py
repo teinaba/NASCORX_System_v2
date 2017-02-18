@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys, time
-sys.path.append('/home/amigos/NASCORX-master/device/')
+sys.path.append('/home/amigos/NASCORX_System-master/device/')
 import CPZ7204
 
 mtr = CPZ7204.cpz7204(dev=1)

@@ -41,7 +41,7 @@ def debug_current():
             print(type(ret))
 
 def debug_output():
-    onoff = [0, 1.0, 2, 1, 0]
+    onoff = [0, 1, 0, 1, 0]
     for i in range(len(onoff)):
         print('****************')
         print('TEST CASE: onoff='+str(onoff[i]))

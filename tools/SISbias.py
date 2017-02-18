@@ -5,7 +5,7 @@
 # import modules
 import time, sys, signal
 import numpy as np
-sys.path.append('/home/amigos/NASCORX-master/base/')
+sys.path.append('/home/amigos/NASCORX_System-master/base/')
 import Cryo
 
 def bias(ch=0):

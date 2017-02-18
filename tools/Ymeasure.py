@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys, time
-sys.path.append('/home/amigos/NASCORX-master/manage/')
+sys.path.append('/home/amigos/NASCORX_System-master/manage/')
 import Ymap
 
 m = Ymap.ymap()

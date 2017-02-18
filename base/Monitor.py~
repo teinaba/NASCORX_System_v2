@@ -84,9 +84,9 @@ class monitor(object):
         '''
         t = datetime.datetime.now()
         ut = t.strftime('%Y-%m-%d-%H-%M-%S')
-        temp = self.rtemp.temp()
-        temp1 = temp[0]
-        temp2 = temp[1]
+        roomtemp = self.rtemp.temp()
+        temp1 = roomtemp[0]
+        temp2 = roomtemp[1]
         press = self.vacuum.query_pressure()
         stage = self.ctemp.measure()
         return [ut, temp1, temp2, press, stage]

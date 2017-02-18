@@ -4,7 +4,7 @@
 
 #import modules
 import sys, time, datetime, os, csv
-sys.path.append('/home/amigos/NASCORX-master/base/')
+sys.path.append('/home/amigos/NASCORX_System-master/base/')
 import Cryo
 
 class mixertune(object):

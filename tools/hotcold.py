@@ -4,7 +4,7 @@
 
 #import modules
 import sys, time, signal
-sys.path.append('/home/amigos/NASCORX-master/device/')
+sys.path.append('/home/amigos/NASCORX_System-master/device/')
 import CPZ7204
 
 

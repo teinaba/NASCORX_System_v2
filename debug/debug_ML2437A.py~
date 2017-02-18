@@ -21,5 +21,8 @@ def functiontest():
     pm.set_average_onoff(onoff=0)
     ret = pm.query_average_onoff()
     print(ret)
+    pm.set_average_onoff(onoff=1)
+    ret = pm.query_average_onoff()
+    print(ret)
     
 functiontest()

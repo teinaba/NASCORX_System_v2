@@ -7,9 +7,9 @@ import time, sys, datetime, os, csv
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
-sys.path.append('/home/amigos/NASCORX-master/base/')
+sys.path.append('/home/amigos/NASCORX_System-master/base/')
 import IF
-sys.path.append('/home/amigos/NASCORX-master/device/')
+sys.path.append('/home/amigos/NASCORX_System-master/device/')
 import ML2437A
 
 def linearity(average=5, pngpath='/home/amigos/data/linearity/'):

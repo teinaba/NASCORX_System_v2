@@ -123,7 +123,7 @@ class firstlo(object):
         Nothing.
         '''
         current = self.query_status()
-        res = 0.05
+        res = 0.5
         if -20.0<=power<=24.0:
             if current[1]<=power:
                 seq = current[1]
@@ -194,7 +194,7 @@ class firstlo(object):
         3. output: output status of the 1st Lo.
             Type: int (0:off, 1:on)
         '''
-        freq = (self.sg.freq_query())*(self.multiplier)
+        freq = (self.sg.query_freq())*(self.multiplier)
         power = self.sg.query_power()
         output = self.sg.query_output()
         return [freq, power, output]

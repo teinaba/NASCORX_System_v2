@@ -97,10 +97,10 @@ class attenuation(object):
         if voltage not in att_voltage:
             self.pa.set_voltage(voltage, 1)
             self.pa.set_voltage(voltage, 2)
-        self.set_level(X1, '1X')
-        self.set_level(Y1, '1Y')
-        self.set_level(X2, '2X')
-        self.set_level(Y2, '2Y')
+        self.pa.set_level(X1, '1X')
+        self.pa.set_level(Y1, '1Y')
+        self.pa.set_level(X2, '2X')
+        self.pa.set_level(Y2, '2Y')
         return
 
     def query_status(self):

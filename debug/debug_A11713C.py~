@@ -64,7 +64,7 @@ def debug_voltage():
     print(type(ret))
 
 
-#debug_model()
-#debug_level()
+debug_model()
+debug_level()
 debug_voltage()
 

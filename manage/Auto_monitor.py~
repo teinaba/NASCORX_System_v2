@@ -46,12 +46,12 @@ class monitor(object):
         ts = utc.strftime('%Y%m%d')
         while 1:
             if os.path.isfile(logpath+'rxmonitor%s.csv'%(ts)) == 0:
-                f = open(logpath+'amb%s.csv'%(ts), 'w')
+                f = open(logpath+'rxmonitor%s.csv'%(ts), 'w')
                 writecsv = csv.writer(f)
                 writecsv.writerow(['#UTC', 'room_temp1[K]', 'room_temp2[K]', 'dewar_pressure[torr]', 'dewar_temp[K]'])
                 f.close()
             else:
-                f = open(logpath+'amb%s.csv'%(ts), 'a')
+                f = open(logpath+'rxmonitor%s.csv'%(ts), 'a')
                 writecsv = csv.writer(f)
                 ret = self.mon.measure()
                 writecsv.writerow([ret[0], ret[1], ret[2], ret[3], ret[4]])

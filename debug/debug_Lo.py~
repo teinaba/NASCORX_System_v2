@@ -40,13 +40,16 @@ def debug_2nd1():
 
 def debug_2nd2():
     t.start_osci(5.0, 1.5)
+    time.sleep(0.1)
     ret1 = t.query_status()
     print(ret1)
     t.change_freq(2.0)
     t.change_power(-50.0)
+    time.sleep(0.1)
     ret2 = t.query_status()
     print(ret2)
     t.end_osci()
+    time.sleep(0.1)
     ret3 = t.query_status()
     print(ret3)
 

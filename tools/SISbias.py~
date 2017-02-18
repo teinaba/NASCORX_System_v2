@@ -8,7 +8,7 @@ import numpy as np
 sys.path.append('/home/amigos/NASCORX-master/base/')
 import Cryo
 
-def Loatt(ch=0):
+def bias(ch=0):
     '''
     DESCRIPTION
     ================
@@ -29,8 +29,17 @@ def Loatt(ch=0):
         ret = raw_input()
         voltage = float(ret)
         box.set_sisv(Vmix=voltage, ch=ch)
+        time.sleep(0.5)
+        ret = box.monitor_sis()
+        if ch == 0:
+            Vmon = ret[0]*1e+1
+            Imon = ret[1]*1e+3
+        else:
+            Vmon = ret[2]*1e+1
+            Imon = ret[3]*1e+3
+        print('Vmon: '+str(Vmon)+' mV')
+        print('Imon: '+str(Imon)+' uA')
 
-if __name__ == '__main__':
-    Loatt()
+bias(ch=0)
 
 # written by K.Urushihara

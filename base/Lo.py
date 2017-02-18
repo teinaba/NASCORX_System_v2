@@ -6,7 +6,7 @@
 import sys, time, numpy
 sys.path.append('/home/amigos/pymeasure2-master/')
 import pymeasure
-sys.path.append('/home/amigos/NASCORX-master/device/')
+sys.path.append('/home/amigos/NASCORX_System-master/device/')
 import E8257D, MG3692C, FSW_0020
 
 class firstlo(object):

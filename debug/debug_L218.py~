@@ -28,5 +28,5 @@ def debug_loop(seq=1):
         print(type(ret))
         time.sleep(0.1)
 
-#debug_measure()
-debug_loop(seq=10000)
+debug_measure()
+#debug_loop(seq=10000)
