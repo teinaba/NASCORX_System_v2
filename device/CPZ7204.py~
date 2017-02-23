@@ -79,14 +79,24 @@ class cpz7204(object):
         ================
         Nothing.
         """
-        self.driver.move_org(speed=speed)
+        init_pos = self.query_position()
+        spd = abs(int(speed))
+        cnt = int(init_pos*-1)
+        self.driver.move(speed=spd, count=cnt)
+        while 1:
+            time.sleep(0.5)
+            crrt_pos = self.query_position()
+            if crrt_pos == 0:
+                 break
+            else:
+                continue         
         return
 
     def rot_angle(self, speed=1000, angle=90):
         """        
         DESCRIPTION
         ================
-        This function moves to the home position.
+        This function rotates the moter.
         
         ARGUMENTS
         ================
@@ -94,21 +104,22 @@ class cpz7204(object):
             Type: int
             Default: 1000
         
+        1. angle: rotate angle [deg]
+            Type: float
+            Default: 90
+
         RETURNS
         ================
         Nothing.
         """
         init_pos = self.query_position()
-        print('Start: '+str(init_pos))
         spd = abs(int(speed))
         cnt = int(float(angle)*10)
         tgt_pos = init_pos + cnt
-        print('To: ' + str(tgt_pos))
         self.driver.move(speed=spd, count=cnt)
         while 1:
             time.sleep(0.5)
             crrt_pos = self.query_position()
-#            print('Now: ' + str(crrt_pos))
             if crrt_pos == tgt_pos:
                  break
             else:

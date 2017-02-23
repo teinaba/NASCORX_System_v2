@@ -54,7 +54,7 @@ class cpz340816(object):
         """
         if abs(voltage)<=10.0:
             if 0<=ch<=15 or ch==None:
-                self.driver.set_da_value(value=voltage, ch=ch)
+                self.driver.set_da_value(value=float(voltage), ch=ch)
             else:
                 print('!!!!ERROR!!!!')
                 print('invalid ch: '+str(ch))

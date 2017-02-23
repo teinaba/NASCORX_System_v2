@@ -100,6 +100,32 @@ class cpz3177(object):
         voltage = ret
         return voltage
 
+    def set_input_range(self, Vrange='AD_10V'):
+        """        
+        DESCRIPTION
+        ================
+        This function sets the A/D input range.
+        
+        ARGUMENTS
+        ================
+        1. Vrange: A/D input range
+            Number: 'AD_0_5V', 'AD_0_10V', 'AD_2P5V', 'AD_5V' or 'AD_10V'
+            Type: string
+            Default: 'AD_10V'
+        
+        RETURNS
+        ================
+        Nothing.
+        """
+        Vlist = ['AD_0_5V', 'AD_0_10V', 'AD_2P5V', 'AD_5V', 'AD_10V']
+        if Vrange in Vlist:
+            self.driver.set_range(Vrange)
+        else:
+            print('!!!!ERROR!!!!')
+            print('invalid range: '+str(Vrange))
+            print('available mode: "AD_0_5V", "AD_0_10V", "AD_2P5V", "AD_5V" or "AD_10V"')
+        return
+
     def query_input_range(self):
         """        
         DESCRIPTION

@@ -4,7 +4,7 @@
 
 #import modules
 import sys, time
-sys.path.append('/home/amigos/NASCORX-master/device/')
+sys.path.append('/home/amigos/NASCORX_System-master/device/')
 import CPZ3177, CPZ340516, CPZ340816
 
 class mixer(object):
@@ -17,13 +17,13 @@ class mixer(object):
     ================
     1. sisda: name of the D/A board of SIS mixer registered in the IP_table
         Type: string
-        Default: 'CPZ340816'
+        Default: 'CPZ340816a'
     2. loda: name of the D/A board of LO attenuator registered in the IP_table
         Type: string
-        Default: 'CPZ340516'
+        Default: 'CPZ340516a'
     3. sisad: name of the A/D board of SIS mixer registered in the IP_table
         Type: string
-        Default: 'CPZ3177'
+        Default: 'CPZ3177a'
     4. device_table: file path of the IP table
         Type: string
         Default: '/home/amigos/NASCORX-master/base/IP_table_115.txt'

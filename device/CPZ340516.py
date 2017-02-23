@@ -215,5 +215,23 @@ class cpz340516(object):
             onoff = 0
         return onoff
 
+    def close_board(self):
+        """        
+        DESCRIPTION
+        ================
+        This function close the board connection.
+        
+        ARGUMENTS
+        ================
+        Nothing.
+        
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.driver.stop_output()
+        self.driver.close()
+        return 
+
 
 #written by K.Urushihara

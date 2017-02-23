@@ -126,5 +126,21 @@ class cpz7204(object):
                 continue
         return
 
+    def close_board(self):
+        """        
+        DESCRIPTION
+        ================
+        This function close the board connection.
+        
+        ARGUMENTS
+        ================
+        Nothing.
+        
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.driver.close()
+        return 
 
 #written by K.Urushihara

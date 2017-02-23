@@ -17,13 +17,13 @@ class mixer(object):
     ================
     1. sisda: name of the D/A board of SIS mixer registered in the IP_table
         Type: string
-        Default: 'CPZ340816'
+        Default: 'CPZ340816a'
     2. loda: name of the D/A board of LO attenuator registered in the IP_table
         Type: string
-        Default: 'CPZ340516'
+        Default: 'CPZ340516a'
     3. sisad: name of the A/D board of SIS mixer registered in the IP_table
         Type: string
-        Default: 'CPZ3177'
+        Default: 'CPZ3177a'
     4. device_table: file path of the IP table
         Type: string
         Default: '/home/amigos/NASCORX-master/base/IP_table_115.txt'
@@ -56,6 +56,25 @@ class mixer(object):
         f.close()
         ret = [device, info1]
         return ret
+
+    def close_box(self):
+        """        
+        DESCRIPTION
+        ================
+        This function close the remote connection.
+        
+        ARGUMENTS
+        ================
+        Nothing.
+        
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.davc.close_board()
+        self.dacc.close_board()
+        self.ad.close_board()
+        return 
 
     def set_sisv(self, Vmix, ch):
         '''        
@@ -236,6 +255,24 @@ class hemt(object):
         f.close()
         ret = [device, info1]
         return ret
+
+    def close_box(self):
+        """        
+        DESCRIPTION
+        ================
+        This function close the remote connection.
+        
+        ARGUMENTS
+        ================
+        Nothing.
+        
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.da.close_board()
+        self.ad.close_board()
+        return 
 
     def set_Vd(self, voltage, ch):
         '''        

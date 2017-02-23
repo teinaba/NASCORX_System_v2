@@ -130,14 +130,14 @@ class cpz340516(object):
         elif ch==None:
             if 'DA_0_1_mA' in Irange:
                 if 0<=current<=0.001:
-                    self.driver.set_da_value(value=current, ch=ch)
+                    self.driver.set_da_value(value=float(current), ch=ch)
                 else:
                     print('!!!!ERROR!!!!')
                     print('invalid current: '+str(current))
                     print('available current: 0-0.001 [A]')
             else:
                 if 0<=current<=0.1:
-                    self.driver.set_da_value(value=current, ch=ch)
+                    self.driver.set_da_value(value=float(current), ch=ch)
                 else:
                     print('!!!!ERROR!!!!')
                     print('invalid current: '+str(current))

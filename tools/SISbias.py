@@ -40,6 +40,6 @@ def bias(ch=0):
         print('Vmon: '+str(Vmon)+' mV')
         print('Imon: '+str(Imon)+' uA')
 
-bias(ch=0)
+bias(ch=1)
 
 # written by K.Urushihara

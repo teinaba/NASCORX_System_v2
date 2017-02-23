@@ -145,5 +145,21 @@ class cpz3177(object):
         Vrange = str(ret[0])
         return Vrange
 
+    def close_board(self):
+        """        
+        DESCRIPTION
+        ================
+        This function close the board connection.
+        
+        ARGUMENTS
+        ================
+        Nothing.
+        
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.driver.close()
+        return 
 
 #written by K.Urushihara

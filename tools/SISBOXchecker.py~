@@ -182,7 +182,7 @@ class Boxchecker(object):
         plt.legend(loc='upper left')
         plt.savefig(pngpath+filename)
         plt.show()
-
+ 
 if __name__ == '__main__':
     testport = 1
     a = Boxchecker()
