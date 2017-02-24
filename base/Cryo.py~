@@ -57,6 +57,25 @@ class mixer(object):
         ret = [device, info1]
         return ret
 
+    def close_box(self):
+        """        
+        DESCRIPTION
+        ================
+        This function close the remote connection.
+        
+        ARGUMENTS
+        ================
+        Nothing.
+        
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.davc.close_board()
+        self.dacc.close_board()
+        self.ad.close_board()
+        return 
+
     def set_sisv(self, Vmix, ch):
         '''        
         DESCRIPTION
@@ -236,6 +255,24 @@ class hemt(object):
         f.close()
         ret = [device, info1]
         return ret
+
+    def close_box(self):
+        """        
+        DESCRIPTION
+        ================
+        This function close the remote connection.
+        
+        ARGUMENTS
+        ================
+        Nothing.
+        
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.da.close_board()
+        self.ad.close_board()
+        return 
 
     def set_Vd(self, voltage, ch):
         '''        

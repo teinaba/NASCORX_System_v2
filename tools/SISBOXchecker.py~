@@ -182,9 +182,9 @@ class Boxchecker(object):
         plt.legend(loc='upper left')
         plt.savefig(pngpath+filename)
         plt.show()
- 
+
 if __name__ == '__main__':
-    testport = 1
+    testport = 0
     a = Boxchecker()
     a.Vrem_Vout_ratio_tune(ch=testport)
     a.Remote_bias_check(ch=testport)

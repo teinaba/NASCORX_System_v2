@@ -29,7 +29,7 @@ class mixer(object):
         Default: '/home/amigos/NASCORX-master/base/IP_table_115.txt'
     '''
 
-    def __init__(self, sisda='CPZ340816a', loda='CPZ340516a', sisad='CPZ3177a', device_table='/home/amigos/NASCORX-master/base/device_table_115.txt'):
+    def __init__(self, sisda='CPZ340816a', loda='CPZ340516a', sisad='CPZ3177a', device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
         self.sisda=sisda
         self.loda=loda
         self.sisad=sisad
