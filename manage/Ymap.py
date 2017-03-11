@@ -27,30 +27,38 @@ class ymap(object):
         self.load = CPZ7204.cpz7204()
 
     def makemap(self, LOrange=[90, 120], LOres=5, Vrange=[6, 8], Vres=0.1, Irange=[10, 30], Ires=10, logpath='/home/amigos/data/SIS/'):
-        '''        
+        '''
         DESCRIPTION
         ================
         This function measures SIS mixer noise.
-        
+
         ARGUMENTS
         ================
-        1. Vrange: searching area of the mixer voltage [mV]
+        1. LOrange: searching area of the LO frequency [GHz]
+            Number: 1st SG * multiplier [mV]
+            Type: list[float, float]
+            Default: [90, 120]
+        2. LOres: searching resolutin of the LO frequency [GHz]
+            Number: LOres > 1 [Hz]
+            Type: float
+            Default: 5
+        3. Vrange: searching area of the mixer voltage [mV]
             Number: 0 -- 30 [mV]
             Type: list[float, float]
             Default: [6, 8]
-        2. Vres: searching resolutin of the mixer voltage [uV]
+        4. Vres: searching resolutin of the mixer voltage [uV]
             Number: 0.04 < Vres <= 30 [mV]
             Type: float
             Default: 0.1
-        3. Irange: searching area of the LO attenuator [mA]
+        5. Irange: searching area of the LO attenuator [mA]
             Number: 0 -- 100 [mA]
             Type: list[float, float]
             Default: [10, 100]
-        4. Ires: searching resolutin of LO attenuator [mA]
+        6. Ires: searching resolutin of LO attenuator [mA]
             Number: 0 < Ires <= 100 [mA]
             Type: float
             Default: 10
-        5. logpath: directory path of the log file
+        7. logpath: directory path of the log file
             Type: string
             Default: '/home/amigos/data/SIS/'
 
