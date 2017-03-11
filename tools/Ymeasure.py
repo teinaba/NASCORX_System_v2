@@ -7,12 +7,12 @@ import Ymap
 m = Ymap.ymap()
 
 #Setting Parameter
-LOrange=[115.0, 116.0] #GHz
+LOrange=[90.0, 120.0] #GHz
 LOres=5.0 #GHz
 Vrange=[7.0, 8.4] #mV
 Vres=0.1 #mV
 Irange=[10.0, 30.0] #%
-Ires=10.0 #%
+Ires=5.0 #%
 logpath='/home/amigos/data/SIS/'
 
 def measure():
