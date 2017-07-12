@@ -20,9 +20,9 @@ class attenuation(object):
         Default: 'A11713C1'
     2. device_table: file path of the IP table
         Type: string
-        Default: '/home/amigos/NASCORX-master/base/IP_table_115.txt'
+        Default: '/home/amigos/NASCORX_System-master/base/IP_table_115.txt'
     '''
-    def __init__(self, device='A11713C1', device_table='/home/amigos/NASCORX-master/base/device_table_115.txt'):
+    def __init__(self, device='A11713C1', device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
         self.device = device
         self.device_table = device_table
         lan = self._ip_search_(device=self.device)

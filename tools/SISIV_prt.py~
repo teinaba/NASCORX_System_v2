@@ -1,0 +1,92 @@
+# ! /usr/bin/env python
+# _*_ coding: UTF-8 _*_
+
+
+# import modules
+import time, sys, datetime, os, csv
+import matplotlib.pyplot as plt
+import numpy as np
+sys.path.append('/home/amigos/NASCORX_System-master/base/')
+import Cryo
+
+def IVtrace(ch, Vgap, Vrange=[0, 12], average=5, pngpath='/home/amigos/data/SIS/IV/'):
+    '''
+    DESCRIPTION
+    ================
+
+    ARGUMENT
+    ================
+        1. : 
+            Type: 
+
+    RETURN
+    ================
+    Nothing.
+    '''
+    Vres = 0.05
+    Vrres = 0.05
+    if ch==0:
+        DAch = 0
+        VADch = 0
+        IADch = 1
+    else:
+        DAch = 1
+        VADch = 2
+        IADch = 3
+    t = datetime.datetime.now()
+    ut = t.strftime('%Y%m%d_%H%M%S')
+    filename = 'SISIV'+ut+'.png'
+    box = Cryo.mixer()    
+    V_mon = np.array([])
+    Verr_mon = np.array([])
+    I_mon = np.array([])
+    Ierr_mon = np.array([])
+    V_list_low = np.arange(Vrange[0], Vgap-0.5, Vres)
+    V_list_mid = np.arange(Vgap-0.5, Vgap+0.5, 0.05)
+    V_list_high = np.arange(Vgap+0.5, Vrange[1], Vres)
+    V_list = np.hstack((V_list_low, V_list_mid, V_list_high))
+    print(V_list)
+    print('======== START ========')
+    for v in V_list:
+        print('V = '+str(round(v, 2))+' mV')
+        box.set_sisv(Vmix=v, ch=DAch)
+        dV = np.array([])
+        dI = np.array([])
+        time.sleep(0.1)
+        for j in range(average):
+            ret = box.monitor_sis()
+            dV = np.append(dV, ret[VADch]*1e+1)
+            dI = np.append(dI, ret[IADch]*1e+3)
+        dV_mean = np.mean(dV, axis=0)
+        dV_std = np.std(dV, axis=0)
+        V_mon = np.append(V_mon, dV_mean)
+        Verr_mon = np.append(Verr_mon, dV_std)
+        dI_mean = np.mean(dI, axis=0)
+        dI_std = np.std(dI, axis=0)
+        I_mon = np.append(I_mon, dI_mean)
+        Ierr_mon = np.append(Ierr_mon, dI_std)
+    V_rlist = np.arange(Vrange[0], Vrange[1], Vrres)
+    V_rlist = np.sort(V_rlist)[::-1]
+    for v in V_rlist:
+        print('V = '+str(round(v, 2))+' mV')
+        box.set_sisv(Vmix=v, ch=DAch)
+        time.sleep(0.1)
+    print('======== END ========')
+    print(dV)
+    print(dV)
+    #plt.errorbar(V_mon, I_mon, xerr=Verr_mon, yerr=Ierr_mon, fmt='.', ecolor='red', color='red', label='ch='+str(DAch))
+    plt.plot(V_mon, I_mon, linestyle='-', color='green', linewidth=1.0, label='interpolation')
+    plt.title('SIS Mixer I-V '+t.strftime('%Y/%m/%d/ %H:%M:%S'))
+    plt.xlim(0, V_mon.max())
+    plt.ylim(I_mon.min(), I_mon.max())
+    plt.xlabel('Mixer Voltage [mV]')
+    plt.ylabel('Mixer Current [uA]')
+    plt.grid(True)
+    plt.legend(loc='upper left')
+    plt.savefig(pngpath+filename)
+    plt.show()
+ 
+
+IVtrace(ch=0, Vgap=8.4)
+
+# written by K.Urushihara

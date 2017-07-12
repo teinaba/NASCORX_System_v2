@@ -28,7 +28,7 @@ class firstlo(object):
         Type: string
         Default: '/home/amigos/NASCORX-master/base/device_table_115.txt'
     '''
-    def __init__(self, multiplier=6, device='E8257D', device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
+    def __init__(self, multiplier=6, device='E8257D', device_table='/home/amigos/NASCORX-master/base/device_table_115.txt'):
         self.multiplier = int(multiplier)
         self.device = device
         self.device_table = device_table

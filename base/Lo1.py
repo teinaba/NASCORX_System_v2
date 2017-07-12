@@ -370,5 +370,9 @@ class secondlo(object):
         output = self.sg.query_output()
         return [freq, power, output]
 
-
+import time
+firstlo(multiplier=6).start_osci(105, 15.0)
+time.sleep(5.0)
+firstlo(multiplier=6).end_osci()
 #written by K.Urushihara
+

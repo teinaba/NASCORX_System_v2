@@ -87,69 +87,35 @@ def IVtrace(ch, Vrange=[0, 12], average=5, pngpath='/home/amigos/data/SIS/IV/', 
     Lo.sg.start_osci(LOrange[0], 19.0)
     Lo_list = np.arange(LOrange[0], LOrange[1], LOres)
     for i in range(len(Lo_list)):
-        Lo.sg.change_freq(freq=Lo_list[i])
-        box.set_loatt(att=Loatt_list[i], ch=ch)
+        Lo.sg.change_freq(freq=Lo_list[i-1])
+        box.set_loatt(att=Loatt_list[i-1], ch=ch)
         lf = Lo.sg.query_status()
-        V_mon2 = np.array([])
-        V_mon3 = np.array([])
-        Verr_mon2 = np.array([])
-        Verr_mon3 = np.array([])
-        I_mon2 = np.array([])
-        I_mon3 = np.array([])
-        Ierr_mon2 = np.array([])
-        Ierr_mon3 = np.array([])
-        hot = np.array([])
-        cold = np.array([])
-        yfac = np.array([])
-        trx = np.array([])
         print(V_list2)
         print('======== START ========')
         for v in V_list2:
             print('V = '+str(round(v, 2))+' mV')
             box.set_sisv(Vmix=v, ch=DAch)
+            V_mon2 = np.array([])
+            Verr_mon2 = np.array([])
+            I_mon2 = np.array([])
+            Ierr_mon2 = np.array([])
             dV2 = np.array([])
             dI2 = np.array([])
-            dV3 = np.array([])
-            dI3 = np.array([])
+            hot = np.array([])
+            cold = np.array([])
+            yfac = np.array([])
+            trx = np.array([])
             time.sleep(0.1)
             
-            if 4.0 < v < 10:
-                #measure IFV
-                Vmon = box.monitor_sis()
-                Vmon = Vmon[VADch]*1e+1
-                Phot = pm.measure(ch=1, resolution=3)
-                load.rot_angle(speed=2000, angle=-90) # COLD
-                time.sleep(0.4)
-                Pcold = pm.measure(ch=1, resolution=3)
-                load.go_home(speed=2000) # HOT
-                for j in range(average):
-                    ret = box.monitor_sis()
-                    dV3 = np.append(dV3, ret[VADch]*1e+1)
-                    dI3 = np.append(dI3, ret[IADch]*1e+3)
-                dV_mean3 = np.mean(dV3, axis=0)
-                dV_std3 = np.std(dV3, axis=0)
-                V_mon3 = np.append(V_mon3, dV_mean3)
-                Verr_mon3 = np.append(Verr_mon3, dV_std3)
-                dI_mean3 = np.mean(dI3, axis=0)
-                dI_std3 = np.std(dI3, axis=0)
-                I_mon3 = np.append(I_mon3, dI_mean3)
-                Ierr_mon3 = np.append(Ierr_mon3, dI_std3)
-                yfac_col = Phot - Pcold
-                hot = np.append(hot, Phot)
-                cold = np.append(cold, Pcold)
-                try:
-                    trx_col = (Tamb - 77.79*10**(yfac_col/10))/(10**(yfac_col/10) - 1)
-                    if trx_col < 0:
-                        trx_col = 1000
-                    else:
-                        pass
-                except ZeroDivisionError:
-                    trx_col = 1000
-                yfac = np.append(yfac, yfac_col)
-                trx = np.append(trx, trx_col)
-            else:
-               pass
-                
+            #measure IFV
+            Vmon = box.monitor_sis()
+            Vmon = Vmon[VADch]*1e+1
+            Phot = pm.measure(ch=1, resolution=3)
+            load.rot_angle(speed=3000, angle=-90) # COLD
+            time.sleep(0.5)
+            Pcold = pm.measure(ch=1, resolution=3)
+            load.go_home(speed=3000) # HOT
+            
             #measure IV
             for j in range(average):
                 ret = box.monitor_sis()
@@ -157,35 +123,40 @@ def IVtrace(ch, Vrange=[0, 12], average=5, pngpath='/home/amigos/data/SIS/IV/', 
                 dI2 = np.append(dI2, ret[IADch]*1e+3)
             dV_mean2 = np.mean(dV2, axis=0)
             dV_std2 = np.std(dV2, axis=0)
+            hot = np.append(hot, Phot)
+            cold = np.append(cold, Pcold)
             V_mon2 = np.append(V_mon2, dV_mean2)
             Verr_mon2 = np.append(Verr_mon2, dV_std2)
             dI_mean2 = np.mean(dI2, axis=0)
             dI_std2 = np.std(dI2, axis=0)
             I_mon2 = np.append(I_mon2, dI_mean2)
             Ierr_mon2 = np.append(Ierr_mon2, dI_std2)
-            
+            yfac_col = Phot - Pcold
+            try:
+                trx_col = (Tamb - 77.79*10**(yfac_col/10))/(10**(yfac_col/10) - 1)
+            except ZeroDivisionError:
+                trx_col = 1000
+            yfac = np.append(yfac, yfac_col)
+            trx = np.append(trx, trx_col)
         V_rlist2 = np.arange(Vrange[0], Vrange[1], Vrres)
         V_rlist2 = np.sort(V_rlist2)[::-1]
         for v in V_rlist2:
             print('V = '+str(round(v, 2))+' mV')
             box.set_sisv(Vmix=v, ch=DAch)
             time.sleep(0.1)
-        
-        
         print('======== END ========')
         print(dV2)
         print(dI2)
-    
+        
         #plot part
-        filename1 = 'SISIV'+ut+str(Lo_list[i])+'.png'
-        filename2 = 'SISIFV'+ut+str(Lo_list[i])+'.png'
-        filename3 = 'SISTrx and Y-factor'+ut+str(Lo_list[i])+'.png'
-        plt.figure()
+        filename1 = 'SISIV'+ut+str(Lo_list[i-1])+'.png'
+        filename2 = 'SISIFV'+ut+str(Lo_list[i-1])+'.png'
+        filename3 = 'SISTrx and Y-factor'+ut+str(Lo_list[i-1])+'.png'
         #plt.errorbar(V_mon1, I_mon1, xerr=Verr_mon1, yerr=Ierr_mon1, fmt='.', ecolor='red', color='red', label='ch='+str(DAch))
         plt.plot(V_mon1, I_mon1, linestyle='-', color='black', linewidth=1.0, label='LO nashi')
         #plt.errorbar(V_mon2, I_mon2, xerr=Verr_mon2, yerr=Ierr_mon1, fmt='.', ecolor='blue', color='blue', label='ch='+str(DAch))
         plt.plot(V_mon2, I_mon2, linestyle='-', color='red', linewidth=1.0, label='LO ari')
-        plt.title('SIS Mixer I-V '+t.strftime('%Y/%m/%d/ %H:%M:%S' + ' LO ='+str(Lo_list[i])+'GHz'+' LOatt='+str(Loatt_list[i])))
+        plt.title('SIS Mixer I-V '+t.strftime('%Y/%m/%d/ %H:%M:%S' + ' LO ='+str(Lo_list[i-1])+'GHz'+' LOatt='+str(Loatt_list[i-1])))
         plt.xlim(0, V_mon1.max())
         plt.ylim(I_mon1.min(), I_mon1.max())
         plt.xlabel('Mixer Voltage [mV]')
@@ -201,11 +172,11 @@ def IVtrace(ch, Vrange=[0, 12], average=5, pngpath='/home/amigos/data/SIS/IV/', 
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
         ax2 = ax1.twinx()
-        ax1.plot(V_mon3, I_mon3, linestyle='-', color='black', linewidth=1.0, label='I-V')
-        ax2.plot(V_mon3, hot, linestyle='-', color='red', linewidth=1.0, label='hot')
-        ax2.plot(V_mon3, cold, linestyle='-', color='blue', linewidth=1.0, label='cold')
-        plt.title('SIS Mixer I-V '+t.strftime('%Y/%m/%d/ %H:%M:%S' + ' LO ='+str(Lo_list[i])+'GHz'+' LOatt='+str(Loatt_list[i])))
-        ax1.set_xlim(4.0, 10)
+        ax1.plot(V_mon2, I_mon2, linestyle='-', color='black', linewidth=1.0, label='I-V')
+        ax2.plot(V_mon2, hot, linestyle='-', color='red', linewidth=1.0, label='hot')
+        ax2.plot(V_mon2, cold, linestyle='-', color='blue', linewidth=1.0, label='cold')
+        plt.title('SIS Mixer I-V '+t.strftime('%Y/%m/%d/ %H:%M:%S' + ' LO ='+str(Lo_list[i-1])+'GHz'+' LOatt='+str(Loatt_list[i-1])))
+        ax1.set_xlim(0, V_mon2.max())
         ax1.set_ylim(I_mon2.min(), I_mon2.max())
         ax2.set_ylim(-40, -20)
         ax1.set_xlabel('Mixer Voltage [mV]')
@@ -222,22 +193,19 @@ def IVtrace(ch, Vrange=[0, 12], average=5, pngpath='/home/amigos/data/SIS/IV/', 
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
         ax2 = ax1.twinx()
-        #ax3 = ax1.twinx()
-        ax1.plot(V_mon3, I_mon3, linestyle='-', color='black', linewidth=1.0, label='I-V')
-        ax2.plot(V_mon3, yfac, linestyle='-', color='green', linewidth=1.0, label='Y-factor')
-        #ax3.plot(V_mon3, trx, linestyle='-', color='red', linewidth=1.0, label='Trx')
-        plt.title('SIS Mixer I-V '+t.strftime('%Y/%m/%d/ %H:%M:%S' + ' LO ='+str(Lo_list[i])+'GHz'+' LOatt='+str(Loatt_list[i])))
-        fig.subplots_adjust(right=0.75)
-        #ax3.spines['right'].set_position(('axes', 1.2))
-        #ax3.set_frame_on(True)
-        ax1.set_xlim(4.0, 10)
+        ax3 = ax1.twinx()
+        ax1.plot(V_mon2, I_mon2, linestyle='-', color='black', linewidth=1.0, label='I-V')
+        ax2.plot(V_mon2, yfac, linestyle='-', color='green', linewidth=1.0, label='')
+        #ax3.plot(V_mon2, trx, linestyle='-', color='yellow', linewidth=1.0, label='cold')
+        plt.title('SIS Mixer I-V '+t.strftime('%Y/%m/%d/ %H:%M:%S' + ' LO ='+str(Lo_list[i-1])+'GHz'+' LOatt='+str(Loatt_list[i-1])))
+        ax1.set_xlim(0, V_mon2.max())
         ax1.set_ylim(I_mon2.min(), I_mon2.max())
         ax2.set_ylim(0, 6)
-        #ax3.set_ylim(0, 300)
+        ax3.set_ylim(0, 300)
         ax1.set_xlabel('Mixer Voltage [mV]')
         ax1.set_ylabel('Mixer Current [uA]')
-        ax2.set_ylabel('Y-factor [dBm]')
-        #ax3.set_ylabel('Trx [K]')
+        ax2.set_ylabel('Y-factor [dbm]')
+        ax3.set_ylabel('Trx [K]')
         ax1.grid(True)
         plt.legend(loc='upper left')
         plt.savefig(pngpath+'IFV/'+filename3)
@@ -249,6 +217,7 @@ def IVtrace(ch, Vrange=[0, 12], average=5, pngpath='/home/amigos/data/SIS/IV/', 
     print('END MEASUREMENT')
     Lo.sg.end_osci()
     
-IVtrace(ch=0, LOrange=[90, 120], LOres=5.0, Loatt_list=[25, 28, 21, 21, 17, 15], gragh=0)
+
+IVtrace(ch=0, LOrange=[90, 100], LOres=5.0, Loatt_list=[20, 22], gragh=0)
 # written by K.Urushihara
 

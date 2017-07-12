@@ -24,7 +24,7 @@ class l218(object):
         Default: 1
     '''
 
-    def __init__(self, IP='192.168.100.1', GPIB=1):
+    def __init__(self, IP='192.168.101.78', GPIB=1):
         self.IP = IP
         self.GPIB = GPIB
         self.com = pymeasure.gpib_prologix(self.IP, self.GPIB)
@@ -52,6 +52,7 @@ class l218(object):
             self.com.send('KRDG? %d'%(ch))
             ret = self.com.readline()
             self.com.close()
+	    print(ret)
             temp = float(ret)
         else:
             print('***********************')

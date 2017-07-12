@@ -1,0 +1,37 @@
+# ! /usr/bin/env python
+# _*_ coding: UTF-8 _*_
+
+
+# import modules
+import time, sys, signal, datetime, os, csv
+import matplotlib.pyplot as plt
+import numpy as np
+sys.path.append('/home/amigos/NASCORX_System-master/base/')
+import Cryo, Lo
+import SISIV_m, SISIV_m2
+
+s1 = SISIV_m
+s2 = SISIV_m2
+
+print('Do You Need LO ? y or n ?')
+ret = raw_input()
+if ret == 'y':
+    print('INPUT LO Fre. 90 -- 105 [GHz]')
+    ret2 = raw_input()
+    current1 = float(ret2)
+    if current1 < 90 or current1 > 105:
+        print('LO Fre is 90 ~ 105 GHz!!!')
+    else:
+        #Loatt_v2.Loatt2()
+        Lo.sg = Lo.firstlo(multiplier=6)
+        Lo.sg.start_osci(current1, 19.0) 
+        s2.IVtrace2(ch=0, Vgap=8.4)
+        Lo.sg.end_osci()
+
+elif ret == 'n':
+    s1.IVtrace(ch=0, Vgap=8.4)
+
+else:
+    print('y or n !!!!!!!!!!!!!!!!!!')
+    pass
+# written by K.Urushihara & S.Masahiro
