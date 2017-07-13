@@ -11,7 +11,7 @@ class cpz340816(object):
     '''
     DESCRIPTION
     ================
-    This class cntrols the CPZ-340816.
+    This class controls the CPZ-340816.
     ////CPZ-340816 Specification////
     Function: D/A Converter
     Resolution: 16 bit
@@ -30,7 +30,7 @@ class cpz340816(object):
     def __init__(self, dev=1):
         self.dev = dev
         self.driver = pyinterface.gpg3300.gpg3300(ndev=self.dev)
-        
+
     def set_voltage(self, voltage=0, ch=None):
         """        
         DESCRIPTION
@@ -146,6 +146,6 @@ class cpz340816(object):
         """
         self.driver.stop_output()
         self.driver.close()
-        return 
+        return
 
 #written by K.Urushihara

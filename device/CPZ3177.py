@@ -11,7 +11,7 @@ class cpz3177(object):
     '''
     DESCRIPTION
     ================
-    This class cntrols the CPZ-3177.
+    This class controls the CPZ-3177.
     ////CPZ-3177 Specification////
     Function: A/D Converter
     Resolution: 12 bit
@@ -141,7 +141,7 @@ class cpz3177(object):
         1. Vrange: A/D input range
             Type: string
         """
-        ret  = self.driver.read_status_input_range()
+        ret = self.driver.read_status_input_range()
         Vrange = str(ret[0])
         return Vrange
 
@@ -160,6 +160,6 @@ class cpz3177(object):
         Nothing.
         """
         self.driver.close()
-        return 
+        return
 
 #written by K.Urushihara

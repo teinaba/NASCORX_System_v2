@@ -11,7 +11,7 @@ class cpz340516(object):
     '''
     DESCRIPTION
     ================
-    This class cntrols the CPZ-340516.
+    This class controls the CPZ-340516.
     ////CPZ-340516 Specification////
     Function: D/A Converter
     Resolution: 16 bit
@@ -29,7 +29,7 @@ class cpz340516(object):
 
     def __init__(self, dev=1):
         self.driver = pyinterface.gpg3300.gpg3300(ndev=dev)
-        
+
     def set_Irange(self, mode='DA_0_100mA', ch=None):
         """        
         DESCRIPTION
@@ -208,7 +208,7 @@ class cpz340516(object):
         1. onoff: D/A output status
             Type: int (1: ON, 0: OFF)
         """
-        ret  = self.driver.read_status_output()
+        ret = self.driver.read_status_output()
         if ret==True:
             onoff = 1
         else:
@@ -231,7 +231,7 @@ class cpz340516(object):
         """
         self.driver.stop_output()
         self.driver.close()
-        return 
+        return
 
 
 #written by K.Urushihara
