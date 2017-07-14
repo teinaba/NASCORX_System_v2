@@ -249,8 +249,112 @@ class multi_cpz340516(object):
     '''
 
     def __init__(self):
+        self.board1 = cpz340516(dev=1)
+        self.board2 = cpz340516(dev=2)
         pass
 
+    def set_Irange(self, mode=['DA_0_100mA']*10):
+        """
+        DESCRIPTION
+        ================
+        This function sets the range of output current for all channels.
 
+        ARGUMENTS
+        ================
+        1. mode: range of output current
+            Number: 'DA_0_100mA' or 'DA_0_1mA'
+            Type: list (string)
+            Length: 10
+            Default: 'DA_0_100mA'
+        2. ch: setting channel number
+            Number: 0-7
+            Type: list (int)
+            Default: None (setting all ch at the same time)
 
-#written by K.Urushihara
+        RETURNS
+        ================
+        Nothing.
+        """
+        # リスト内包表記でできないかな
+        #[self.board1.set_Irange(mode=x, ch=y) for x, y in zip(mode, ch)]
+        for i in range(10):
+            if i <= 8:
+                self.board1.set_Irange(mode=mode(i), ch=i)
+            elif 9 <= i <= 10:
+                self.board2.set_Irange(mode=mode(i), ch=i)
+            else:
+                pass
+        return
+
+    def query_Irange(self):
+        """
+        DESCRIPTION
+        ================
+        This function queries the range of output current for all channels.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. mode: range of output current
+            Type: list
+        """
+        ret1 = self.board1.query_Irange()
+        ret2 = self.board2.query_Irange()
+        mode = ret1 + ret2
+        return mode
+
+    def set_current(self, current=[0]*10):
+        """
+        DESCRIPTION
+        ================
+        This function sets the output current for all channels.
+
+        ARGUMENTS
+        ================
+        1. current: output current
+            Number: 0-0.1 [A]
+            Type: list (float)
+            Default: 0
+        2. ch: setting channel number
+            Number: 0-7
+            Type: list(int)
+            Default: None (setting all ch at the same time)
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        for i in range(10):
+            if i <= 8:
+                self.board1.set_current(mode=current(i), ch=i)
+            elif 9 <= i <= 10:
+                self.board2.set_current(mode=current(i), ch=i)
+            else:
+                pass
+        return
+
+    def query_current(self):
+        """
+        DESCRIPTION
+        ================
+        This function queries the output current for all channels.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. current: output current
+            Type: list
+            Length: 10
+        """
+        ret1 = self.board1.query_current()
+        ret2 = self.board2.query_current()
+        current = ret1 + ret2
+        return current
+
+# written by K.Urushihara
