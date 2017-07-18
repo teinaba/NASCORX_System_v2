@@ -593,5 +593,188 @@ class multi_mixer(object):
         return att
 
 
+class multi_hemt(object):
+    """
+    DESCRIPTION
+    ================
+    This class controls the HEMT amplifier.
+
+    ARGUMENTS
+    ================
+    1. hemtda: name of the D/A board of SIS mixer registered in the IP_table
+        Type: string
+        Default: 'CPZ340816'
+    2. hemtad: name of the A/D board of SIS mixer registered in the IP_table
+        Type: string
+        Default: 'CPZ3177'
+    3. device_table: file path of the IP table
+        Type: string
+        Default: '/home/amigos/NASCORX-master/base/IP_table_115.txt'
+    """
+
+    def __init__(self, hemtda1='CPZ340816a', hemtda2='CPZ340816b', hemtad='CPZ3177b',
+                 device_table='/home/amigos/NASCORX-master/base/device_table_115.txt'):
+        # define
+        self.hemtda1 = hemtda1
+        self.hemtda2 = hemtda2
+        self.hemtad = hemtad
+        self.device_table = device_table
+        # search board number
+        self.nhemtda1 = self._board_search_(device=self.hemtda1)
+        self.nhemtda2 = self._board_search_(device=self.hemtda2)
+        self.nhemtad = self._board_search_(device=self.hemtad)
+        # import board control module
+        self.da1 = CPZ340816.cpz340816(dev=self.nhemtda1[1])
+        self.da2 = CPZ340816.cpz340816(dev=self.nhemtda2[1])
+        self.ad = CPZ3177.cpz3177(dev=self.nhemtad[1])
+        # settings
+        self.ad.set_mode(mode='single')
+        self.ad.set_input_range(Vrange='AD_10V')
+
+    def _board_search_(self, device):
+        f = open(self.device_table, 'r')
+        for line in f:
+            dev = line.strip().split(',')
+            if device in dev:
+                info1 = int(dev[1].strip())
+                break
+            else:
+                pass
+        f.close()
+        ret = [device, info1]
+        return ret
+
+    def close_box(self):
+        """
+        DESCRIPTION
+        ================
+        This function close the remote connection for all boards.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.da1.close_board()
+        self.da2.close_board()
+        self.ad.close_board()
+        return
+
+    def set_Vd(self, voltage):
+        """
+        DESCRIPTION
+        ================
+        This function sets the drain voltage for all amplifiers.
+
+        ARGUMENTS
+        ================
+        1. voltage: drain voltage [V]
+            Number: 0 -- 2.0 [V]
+            Type: float list
+            Length: 8
+            Default: Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        for i in range(8):
+            if 0.0 <= voltage[i] <= 2.0:
+                if 0 <= i <= 3:
+                    self.da1.set_voltage(voltage=voltage[i], ch=4+i*3)
+                    self.da1.set_output(onoff=1)
+                elif 4 <= i <= 7:
+                    self.da2.set_voltage(voltage=voltage[i], ch=4+(i-4)*3)
+                    self.da2.set_output(onoff=1)
+            else:
+                print('!!!!ERROR!!!!')
+                print('invalid voltage: '.format(voltage[i]))
+                print('available voltage: 0.0 -- 2.0 [V]')
+        return
+
+    def set_Vg1(self, voltage):
+        """
+        DESCRIPTION
+        ================
+        This function sets the gate voltage 1 for all amplifiers.
+
+        ARGUMENTS
+        ================
+        1. voltage: gate voltage [V]
+            Number: -2.5 -- +2.5 [V]
+            Type: float list
+            Length: 8
+            Default: Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        for i in range(8):
+            if -2.5 <= voltage[i] <= 2.5:
+                if 0 <= i <= 3:
+                    self.da1.set_voltage(voltage=voltage[i], ch=5+i*3)
+                    self.da1.set_output(onoff=1)
+                elif 4 <= i <= 7:
+                    self.da2.set_voltage(voltage=voltage[i], ch=5+(i-4)*3)
+                    self.da2.set_output(onoff=1)
+            else:
+                print('!!!!ERROR!!!!')
+                print('invalid voltage: '.format(voltage[i]))
+                print('available voltage: -2.5 -- +2.5 [V]')
+
+    def set_Vg2(self, voltage):
+        """
+        DESCRIPTION
+        ================
+        This function sets the gate voltage 2 for all amplifiers.
+
+        ARGUMENTS
+        ================
+        1. voltage: gate voltage [V]
+            Number: -2.5 -- +2.5 [V]
+            Type: float list
+            Length: 8
+            Default: Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        for i in range(8):
+            if -2.5 <= voltage[i] <= 2.5:
+                if 0 <= i <= 3:
+                    self.da1.set_voltage(voltage=voltage[i], ch=6+i*3)
+                    self.da1.set_output(onoff=1)
+                elif 4 <= i <= 7:
+                    self.da2.set_voltage(voltage=voltage[i], ch=6+(i-4)*3)
+                    self.da2.set_output(onoff=1)
+            else:
+                print('!!!!ERROR!!!!')
+                print('invalid voltage: '.format(voltage[i]))
+                print('available voltage: -2.5 -- +2.5 [V]')
+
+    def monitor_hemt(self):
+        """
+        DESCRIPTION
+        ================
+        This function queries the HEMT monitor voltage.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. voltage: monitor voltage [V]
+            Type: float list
+        """
+        ret = self.ad.query_voltage()
+        voltage = ret
+        return voltage
+
 #written by K.Urushihara
-# 2017/07/18 T.Inaba: add multi_mixer
+# 2017/07/18 T.Inaba: add multi_mixer, multi_hemt
