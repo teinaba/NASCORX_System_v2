@@ -357,4 +357,63 @@ class multi_cpz340516(object):
         current = ret1 + ret2
         return current
 
+    def set_output(self, onoff=[0, 0]):
+        """
+        DESCRIPTION
+        ================
+        This function switches the D/A output for two boards.
+
+        ARGUMENTS
+        ================
+        1. onoff: D/A output
+            Number: 1 or 0
+            Type: list (int (1: ON, 0: OFF))
+            Default: 0
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.board1.set_output(onoff=onoff(0))
+        self.board1.set_output(onoff=onoff(1))
+
+    def query_output(self):
+        """
+        DESCRIPTION
+        ================
+        This function queries the D/A output status for two boards.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. onoff: D/A output status
+            Type: list (int (1: ON, 0: OFF))
+        """
+        ret1 = self.board1.query_output()
+        ret2 = self.board2.query_output()
+        onoff = ret1 + ret2
+        return onoff
+
+    def close_board(self):
+        """
+        DESCRIPTION
+        ================
+        This function close the board connection for two boards.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.board1.close_board()
+        self.board2.close_board()
+        return
+
+
 # written by K.Urushihara
