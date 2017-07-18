@@ -123,7 +123,7 @@ class cpz340816(object):
         1. onoff: D/A output status
             Type: int (1: ON, 0: OFF)
         """
-        ret  = self.driver.read_status_output()
+        ret = self.driver.read_status_output()
         if ret==True:
             onoff = 1
         else:
