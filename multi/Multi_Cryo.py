@@ -444,7 +444,7 @@ class multi_mixer(object):
         return
 
     def set_sisv(self, Vmix):
-        '''
+        """
         DESCRIPTION
         ================
         This function sets the mixer bias for all mixers.
@@ -460,9 +460,10 @@ class multi_mixer(object):
         RETURNS
         ================
         Nothing.
-        '''
+        """
         Vmix_Limit = 30.0    # [mV]
-        Vda = (1.0/3.0) * np.array(Vmix)    # mixer bias[mV] --> D/A voltage[V] ## arrayをfloat指定しなくて平気かな？
+        Vda = [1.0/3.0 * float(value) for value in Vmix]
+        #Vda = (1.0/3.0) * np.array(Vmix)    # mixer bias[mV] --> D/A voltage[V] ## arrayをfloat指定しなくて平気かな？
         for i in range(12):
             if 0 <= i <= 3:    # for beam 1-2
                 if 0.0 <= Vmix[i] <= Vmix_Limit:
@@ -571,7 +572,7 @@ class multi_mixer(object):
         return
 
     def query_loatt(self):
-        '''
+        """
         DESCRIPTION
         ================
         This function queries the 1st Lo attenuation level for all channels.
@@ -585,7 +586,7 @@ class multi_mixer(object):
         1. att: attenuation level [mA]
             Type: float list
             Length: 12
-        '''
+        """
         ret1 = self.dacc1.query_current()
         ret2 = self.dacc2.query_current()
         ret = ret1 + ret2[:2]
@@ -776,5 +777,7 @@ class multi_hemt(object):
         voltage = ret
         return voltage
 
-#written by K.Urushihara
+
+# written by K.Urushihara
 # 2017/07/18 T.Inaba: add multi_mixer, multi_hemt
+# 2017/07/21 T.Inaba: minor changes (np.array->list comprehension, double quotation)
