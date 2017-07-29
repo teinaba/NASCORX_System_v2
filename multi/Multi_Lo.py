@@ -3,7 +3,7 @@
 
 
 # import modules
-import sys, time, numpy
+import sys, time
 sys.path.append('/home/amigos/pymeasure2-master/')
 import pymeasure
 
@@ -106,7 +106,7 @@ class firstlo(object):
         else:
             print('!!!!ERROR!!!!')
             print('invalid freq: '.format(freq))
-            print('available freq: '.format(0.01 * self.multiplier) + ' - '.format(20.0 * self.multiplier) + ' [GHz]')
+            print('available freq: {0} - {1} [GHz]'.format(0.01 * self.multiplier, 20.0 * self.multiplier))
         return
 
     def change_power(self, power):
