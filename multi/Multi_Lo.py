@@ -105,7 +105,7 @@ class firstlo(object):
             self.sg.set_freq(RF, 'GHz')
         else:
             print('!!!!ERROR!!!!')
-            print('invalid freq: '.format(freq))
+            print('invalid freq: {0}'.format(freq))
             print('available freq: {0} - {1} [GHz]'.format(0.01 * self.multiplier, 20.0 * self.multiplier))
         return
 
@@ -147,7 +147,7 @@ class firstlo(object):
                 pass
         else:
             print('!!!!ERROR!!!!')
-            print('invalid power: '.format(power))
+            print('invalid power: {0}'.format(power))
             print('available power: -20 - +24 [dBm]')
         return
 
@@ -234,7 +234,7 @@ class secondlo(object):
             self.sg = FSW_0020.fsw_0020(IP=self.IP, port=self.port)
         else:
             print('!!!!ERROR!!!!')
-            print('CANNOT FIND: '.format(device))
+            print('CANNOT FIND: {0}'.format(device))
 
     def _ip_search_(self, device):
         f = open(self.device_table, 'r')
@@ -297,7 +297,7 @@ class secondlo(object):
             self.sg.set_freq(freq)
         else:
             print('!!!!ERROR!!!!')
-            print('invalid freq: '.format(freq))
+            print('invalid freq: {0}'.format(freq))
             print('available freq: 2 - 20 [GHz]')
         return
 
@@ -322,7 +322,7 @@ class secondlo(object):
             self.sg.set_power(power)
         else:
             print('!!!!ERROR!!!!')
-            print('invalid power: '.format(power))
+            print('invalid power: {0}'.format(power))
             print('available power: -20 - +30 [dBm]')
         return
 
@@ -700,3 +700,4 @@ class multi_secondlo(object):
         return sg_status1, sg_status2, sg_status3, sg_status4
 
 # written by K.Urushihara
+# 2017/07/28 T.Inaba: add multi systems
