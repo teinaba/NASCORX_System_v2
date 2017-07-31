@@ -56,7 +56,8 @@ class a11713c(object):
         ================
         Nothing.
         """
-        modellist = ['NA', 'AG8494g', 'AG8495g', 'AG8495k', 'AG8496g', 'AG8497k', 'AG84904k', 'AG84905m', 'AG84906k', 'AG84907k' 'AG84908m']
+        modellist = ['NA', 'AG8494g', 'AG8495g', 'AG8495k', 'AG8496g', 'AG8497k',
+                     'AG84904k', 'AG84905m', 'AG84906k', 'AG84907k', 'AG84908m']
         if model in modellist:
             self.com.open()
             if ch=='1X':
@@ -282,4 +283,5 @@ class a11713c(object):
         voltage = [bank1, bank2]
         return voltage
 
-#written by K.Urushihara
+# written by K.Urushihara
+# 2017/07/31 T.Inaba: fix a mistake (add , to modellist)
