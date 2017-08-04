@@ -2,13 +2,11 @@
 # _*_ coding: UTF-8 _*_
 
 
-#import modules
-import time, sys
-sys.path.append('/home/amigos/pyinterface-master/')
+# import modules
 import pyinterface
 
 class cpz340516(object):
-    '''
+    """
     DESCRIPTION
     ================
     This class controls the CPZ-340516.
@@ -25,7 +23,7 @@ class cpz340516(object):
     1. dev: device number
         Type: int
         Default: 1
-    '''
+    """
 
     def __init__(self, dev=1):
         self.driver = pyinterface.gpg3300.gpg3300(ndev=dev)
@@ -51,21 +49,23 @@ class cpz340516(object):
         ================
         Nothing.
         """
-        if mode=='DA_0_1mA':
-            if 0<=ch<=7 or ch==None:
+        if mode == 'DA_0_1mA':
+            if ch is None or 0 <= ch <= 7:
                 self.driver.set_range(da_range=mode, ch=ch)
             else:
                 print('!!!!ERROR!!!!')
-                print('invalid ch: '+str(ch))
-        elif mode=='DA_0_100mA':
-            if 0<=ch<=7 or ch==None:
+                print('invalid ch: {0}'.format(ch))
+                print('available ch: 0, 1, ... , 7 or None')
+        elif mode == 'DA_0_100mA':
+            if ch is None or 0 <= ch <= 7:
                 self.driver.set_range(da_range=mode, ch=ch)
             else:
                 print('!!!!ERROR!!!!')
-                print('invalid ch: '+str(ch))
+                print('invalid ch: {0}'.format(ch))
+                print('available ch: 0, 1, ... , 7 or None')
         else:
             print('!!!!ERROR!!!!')
-            print('invalid mode: '+str(mode))
+            print('invalid mode: {0}'.format(mode))
             print('mode = "DA_0_1mA" or "DA_0_100mA"')
         return
 
@@ -112,39 +112,39 @@ class cpz340516(object):
         Nothing.
         """
         Irange = self.query_Irange()
-        if 0<=ch<=7:
-            if Irange[ch]=='DA_0_1mA':
-                if 0<=current<=0.001:
+        if 0 <= ch <= 7:
+            if Irange[ch] == 'DA_0_1mA':
+                if 0 <= current <= 0.001:
                     self.driver.set_da_value(value=float(current), ch=ch)
                 else:
                     print('!!!!ERROR!!!!')
-                    print('invalid current: '+str(current))
+                    print('invalid current: {0}'.format(current))
                     print('available current: 0-0.001 [A]')
             else:
-                if 0<=current<=0.1:
+                if 0 <= current <= 0.1:
                     self.driver.set_da_value(value=float(current), ch=ch)
                 else:
                     print('!!!!ERROR!!!!')
-                    print('invalid current: '+str(current))
+                    print('invalid current: {0}'.format(current))
                     print('available current: 0-0.1 [A]')
-        elif ch==None:
+        elif ch is None:
             if 'DA_0_1_mA' in Irange:
-                if 0<=current<=0.001:
+                if 0 <= current <= 0.001:
                     self.driver.set_da_value(value=float(current), ch=ch)
                 else:
                     print('!!!!ERROR!!!!')
-                    print('invalid current: '+str(current))
+                    print('invalid current: {0}'.format(current))
                     print('available current: 0-0.001 [A]')
             else:
-                if 0<=current<=0.1:
+                if 0 <= current <= 0.1:
                     self.driver.set_da_value(value=float(current), ch=ch)
                 else:
                     print('!!!!ERROR!!!!')
-                    print('invalid current: '+str(current))
+                    print('invalid current: {0}'.format(current))
                     print('available current: 0-0.1 [A]')
         else:
             print('!!!!ERROR!!!!')
-            print('invalid ch: '+str(ch))
+            print('invalid ch: {0}'.format(ch))
             print('available ch: 0, 1, ... , 7 or None')
         return
 
@@ -183,13 +183,13 @@ class cpz340516(object):
         ================
         Nothing.
         """
-        if onoff==1:
+        if onoff == 1:
             self.driver.output()
-        elif onoff==0:
+        elif onoff == 0:
             self.driver.stop_output()
         else:
             print('!!!!ERROR!!!!')
-            print('invalid argument: '+str(onoff))
+            print('invalid argument: {0}'.format(onoff))
             print('this argument must be 1 or 0')
         return
 
@@ -209,7 +209,7 @@ class cpz340516(object):
             Type: int (1: ON, 0: OFF)
         """
         ret = self.driver.read_status_output()
-        if ret==True:
+        if ret is True:
             onoff = 1
         else:
             onoff = 0
@@ -233,4 +233,5 @@ class cpz340516(object):
         self.driver.close()
         return
 
-#written by K.Urushihara
+# written by K.Urushihara
+# 2017/08/04 T.Inaba: debugged
