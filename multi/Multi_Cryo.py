@@ -10,7 +10,7 @@ import CPZ3177, CPZ340516, CPZ340816
 
 
 class mixer(object):
-    '''
+    """
     DESCRIPTION
     ================
     This class controls the SIS mixer.
@@ -29,12 +29,13 @@ class mixer(object):
     4. device_table: file path of the IP table
         Type: string
         Default: '/home/amigos/NASCORX-master/base/IP_table_115.txt'
-    '''
+    """
 
-    def __init__(self, sisda='CPZ340816a', loda='CPZ340516a', sisad='CPZ3177a', device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
-        self.sisda=sisda
-        self.loda=loda
-        self.sisad=sisad
+    def __init__(self, sisda='CPZ340816a', loda='CPZ340516a', sisad='CPZ3177a',
+                 device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
+        self.sisda = sisda
+        self.loda = loda
+        self.sisad = sisad
         self.device_table = device_table
         self.nsisda = self._board_search_(device=self.sisda)
         self.nloda = self._board_search_(device=self.loda)
@@ -63,7 +64,7 @@ class mixer(object):
         """
         DESCRIPTION
         ================
-        This function close the remote connection.
+        This function closes the remote connection.
 
         ARGUMENTS
         ================
@@ -79,7 +80,7 @@ class mixer(object):
         return
 
     def set_sisv(self, Vmix, ch):
-        '''
+        """
         DESCRIPTION
         ================
         This function sets the mixer bias.
@@ -98,26 +99,26 @@ class mixer(object):
         RETURNS
         ================
         Nothing.
-        '''
-        Vmix_Limit = 30.0 # mV
-        ch_range = range(16) #numberes of channel
-        Vda = (1.0/3.0)*float(Vmix) #mixer bias[mV] --> D/A voltage[V]
-        if 0.0<=Vmix<=Vmix_Limit:
+        """
+        Vmix_Limit = 30.0  # mV
+        ch_range = range(16)  # numbers of channel
+        Vda = (1.0 / 3.0) * float(Vmix)  # mixer bias[mV] --> D/A voltage[V]
+        if 0.0 <= Vmix <= Vmix_Limit:
             if ch in ch_range:
                 self.davc.set_voltage(voltage=Vda, ch=ch)
                 self.davc.set_output(onoff=1)
             else:
                 print('!!!!ERROR!!!!')
-                print('invalid ch: '+str(ch))
-                print('available ch: '+str(ch_range[0])+' - '+str(ch_range[-1]))
+                print('invalid ch: {0}'.format(ch))
+                print('available ch: {0} - {1}'.format(ch_range[0], str(ch_range[-1])))
         else:
             print('!!!!ERROR!!!!')
-            print('invalid voltage: '+str(Vmix))
-            print('available voltage: 0.0 - '+str(Vmix_Limit)+' [mV]')
+            print('invalid voltage: {0}'.format(Vmix))
+            print('available voltage: 0.0 - {0} [mV]'.format(Vmix_Limit))
         return
 
     def query_sisv(self):
-        '''
+        """
         DESCRIPTION
         ================
         This function queries the mixer bias.
@@ -130,15 +131,16 @@ class mixer(object):
         ================
         1. Vmix: mixer bias [mV]
             Type: float list
-        '''
+        """
         ret = self.davc.query_voltage()
-        Vmix = []
-        for i in ret:
-            Vmix.append(i*3.0)
+        Vmix = list(map(float, ret))
+        #Vmix = []
+        #for i in ret:
+        #    Vmix.append(i * 3.0)
         return Vmix
 
     def monitor_sis(self):
-        '''
+        """
         DESCRIPTION
         ================
         This function queries the mixer monitor voltage.
@@ -151,15 +153,17 @@ class mixer(object):
         ================
         1. voltage: monitor voltage [V]
             Type: float list
-        '''
+        """
         ret = self.ad.query_input()
-        Vmix_mon = []
-        for i in range(len(ret)):
-            Vmix_mon.append(float(ret[i]))
+        Vmix_mon = list(map(float, ret))
+        #ret = self.ad.query_input()
+        #Vmix_mon = []
+        #for i in range(len(ret)):
+        #    Vmix_mon.append(float(ret[i]))
         return Vmix_mon
 
     def set_loatt(self, att, ch):
-        '''
+        """
         DESCRIPTION
         ================
         This function sets the 1st Lo attenuation level.
@@ -178,23 +182,23 @@ class mixer(object):
         RETURNS
         ================
         Nothing.
-        '''
-        if 0.0<=att<=100.0:
-            if 0<=ch<=7:
+        """
+        if 0.0 <= att <= 100.0:
+            if 0 <= ch <= 7:
                 self.dacc.set_current(current=float(att)*1e-3, ch=ch)
                 self.dacc.set_output(onoff=1)
             else:
                 print('!!!!ERROR!!!!')
-                print('invalid ch: '+str(ch))
+                print('invalid ch: {0}'.format(ch))
                 print('available ch: 0 - 7')
         else:
             print('!!!!ERROR!!!!')
-            print('invalid att: '+str(att))
+            print('invalid att: {0}'.format(att))
             print('available att: 0.0 - 100.0 [mA]')
         return
 
     def query_loatt(self):
-        '''
+        """
         DESCRIPTION
         ================
         This function queries the 1st Lo attenuation level.
@@ -207,19 +211,20 @@ class mixer(object):
         ================
         1. att: attenuation level [mA]
             Type: float list
-        '''
+        """
         ret = self.dacc.query_current()
-        att = []
-        for i in range(len(ret)):
-            att.append(float(ret[i])*1e+3)
+        att = list(map(float, ret))
+        #att = []
+        #for i in range(len(ret)):
+        #    att.append(float(ret[i]) * 1e+3)
         return att
 
 
 class hemt(object):
-    '''
+    """
     DESCRIPTION
     ================
-    This class controls the HEMT amplifire.
+    This class controls the HEMT amplifier.
 
     ARGUMENTS
     ================
@@ -231,12 +236,13 @@ class hemt(object):
         Default: 'CPZ3177'
     3. device_table: file path of the IP table
         Type: string
-        Default: '/home/amigos/NASCORX-master/base/IP_table_115.txt'
-    '''
+        Default: '/home/amigos/NASCORX_System-master/base/IP_table_115.txt'
+    """
 
-    def __init__(self, hemtda='CPZ340816b', hemtad='CPZ3177b', device_table='/home/amigos/NASCORX-master/base/device_table_115.txt'):
-        self.hemtda=hemtda
-        self.hemtad=hemtad
+    def __init__(self, hemtda='CPZ340816a', hemtad='CPZ3177b',
+                 device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
+        self.hemtda = hemtda
+        self.hemtad = hemtad
         self.device_table = device_table
         self.nhemtda = self._board_search_(device=self.hemtda)
         self.nhemtad = self._board_search_(device=self.hemtad)
@@ -262,7 +268,7 @@ class hemt(object):
         """
         DESCRIPTION
         ================
-        This function close the remote connection.
+        This function closes the remote connection.
 
         ARGUMENTS
         ================
@@ -277,7 +283,7 @@ class hemt(object):
         return
 
     def set_Vd(self, voltage, ch):
-        '''
+        """
         DESCRIPTION
         ================
         This function sets the drain voltage.
@@ -288,7 +294,7 @@ class hemt(object):
             Number: 0 -- 2.0 [V]
             Type: float
             Default: Nothing.
-        2. ch: channel of the HEMT amplifire.
+        2. ch: channel of the HEMT amplifier.
             Number: 0 -- 15
             Type: int
             Default: Nothing.
@@ -296,24 +302,23 @@ class hemt(object):
         RETURNS
         ================
         Nothing.
-        '''
-        if 0.0<=voltage<=2.0:
-            if 0<=ch<=15:
+        """
+        if 0.0 <= voltage <= 2.0:
+            if 0 <= ch <= 15:
                 self.da.set_voltage(voltage=voltage, ch=ch)
                 self.da.set_output(onoff=1)
             else:
                 print('!!!!ERROR!!!!')
-                print('invalid ch: '+str(ch))
+                print('invalid ch: {0}'.format(ch))
                 print('available ch: 0 -- 15')
         else:
             print('!!!!ERROR!!!!')
-            print('invalid voltage: '+str(voltage))
+            print('invalid voltage: {0}'.format(voltage))
             print('available voltage: 0.0 -- 2.0 [V]')
         return
 
-
     def set_Vg(self, voltage, ch):
-        '''
+        """
         DESCRIPTION
         ================
         This function sets the gate voltage.
@@ -332,23 +337,23 @@ class hemt(object):
         RETURNS
         ================
         Nothing.
-        '''
-        if -2.5<=voltage<=2.5:
-            if 0<=ch<=15:
-                self.davc.set_voltage(voltage=voltage, ch=ch)
-                self.davc.set_output(onoff=1)
+        """
+        if -2.5 <= voltage <= 2.5:
+            if 0 <= ch <= 15:
+                self.da.set_voltage(voltage=voltage, ch=ch)
+                self.da.set_output(onoff=1)
             else:
                 print('!!!!ERROR!!!!')
-                print('invalid ch: '+str(ch))
+                print('invalid ch: {0}'.format(ch))
                 print('available ch: 0 -- 15')
         else:
             print('!!!!ERROR!!!!')
-            print('invalid voltage: '+str(voltage))
+            print('invalid voltage: {0}'.format(voltage))
             print('available voltage: -2.5 -- +2.5 [V]')
         return
 
     def monitor_hemt(self):
-        '''
+        """
         DESCRIPTION
         ================
         This function queries the HEMT monitor voltage.
@@ -361,9 +366,9 @@ class hemt(object):
         ================
         1. voltage: monitor voltage [V]
             Type: float list
-        '''
-        ret = self.davc.query_voltage()
-        voltage = ret
+        """
+        ret = self.ad.query_voltage()
+        voltage = list(map(float, ret))
         return voltage
 
 
@@ -464,7 +469,7 @@ class multi_mixer(object):
         """
         Vmix_Limit = 30.0  # [mV]
         Vda = [1.0 / 3.0 * float(value) for value in Vmix]
-        #Vda = (1.0/3.0) * np.array(Vmix)  # mixer bias[mV] --> D/A voltage[V] ## arrayをfloat指定しなくて平気かな？
+        # Vda = (1.0/3.0) * np.array(Vmix)  # mixer bias[mV] --> D/A voltage[V] ## arrayをfloat指定しなくて平気かな？
         for i in range(12):
             if 0 <= i <= 3:  # for beam 1-2
                 if 0.0 <= Vmix[i] <= Vmix_Limit:
@@ -476,7 +481,7 @@ class multi_mixer(object):
                     print('available voltage: 0.0 - {0} [mV]'.format(Vmix_Limit))
             elif 4 <= i <= 7:  # for beam 3-4
                 if 0.0 <= Vmix[i] <= Vmix_Limit:
-                    self.davc2.set_voltage(voltage=Vda[i], ch=i-4)
+                    self.davc2.set_voltage(voltage=Vda[i], ch=i - 4)
                     self.davc2.set_output(onoff=1)
                 else:
                     print('!!!!ERROR!!!!')
@@ -484,7 +489,7 @@ class multi_mixer(object):
                     print('available voltage: 0.0 - {0} [mV]'.format(Vmix_Limit))
             elif 8 <= i <= 11:  # for 230GHz
                 if 0.0 <= Vmix[i] <= Vmix_Limit:
-                    self.davc3.set_voltage(voltage=Vda[i], ch=i-8)
+                    self.davc3.set_voltage(voltage=Vda[i], ch=i - 8)
                     self.davc3.set_output(onoff=1)
                 else:
                     print('!!!!ERROR!!!!')
@@ -561,10 +566,10 @@ class multi_mixer(object):
         for ch in range(10):
             if 0.0 <= att[ch] <= 100.0:
                 if 0 <= ch <= 7:
-                    self.dacc1.set_current(current=float(att[ch])*1e-3, ch=ch)
+                    self.dacc1.set_current(current=float(att[ch]) * 1e-3, ch=ch)
                     self.dacc1.set_output(onoff=1)
                 elif 8 <= ch <= 9:
-                    self.dacc2.set_current(current=float(att[ch])*1e-3, ch=ch-8)
+                    self.dacc2.set_current(current=float(att[ch]) * 1e-3, ch=ch - 8)
                     self.dacc2.set_output(onoff=1)
             else:
                 print('!!!!ERROR!!!!')
@@ -686,10 +691,10 @@ class multi_hemt(object):
         for i in range(8):
             if 0.0 <= voltage[i] <= 2.0:
                 if 0 <= i <= 3:
-                    self.da1.set_voltage(voltage=voltage[i], ch=4+i*3)
+                    self.da1.set_voltage(voltage=voltage[i], ch=4 + i * 3)
                     self.da1.set_output(onoff=1)
                 elif 4 <= i <= 7:
-                    self.da2.set_voltage(voltage=voltage[i], ch=4+(i-4)*3)
+                    self.da2.set_voltage(voltage=voltage[i], ch=4 + (i - 4) * 3)
                     self.da2.set_output(onoff=1)
             else:
                 print('!!!!ERROR!!!!')
@@ -718,10 +723,10 @@ class multi_hemt(object):
         for i in range(8):
             if -2.5 <= voltage[i] <= 2.5:
                 if 0 <= i <= 3:
-                    self.da1.set_voltage(voltage=voltage[i], ch=5+i*3)
+                    self.da1.set_voltage(voltage=voltage[i], ch=5 + i * 3)
                     self.da1.set_output(onoff=1)
                 elif 4 <= i <= 7:
-                    self.da2.set_voltage(voltage=voltage[i], ch=5+(i-4)*3)
+                    self.da2.set_voltage(voltage=voltage[i], ch=5 + (i - 4) * 3)
                     self.da2.set_output(onoff=1)
             else:
                 print('!!!!ERROR!!!!')
@@ -749,10 +754,10 @@ class multi_hemt(object):
         for i in range(8):
             if -2.5 <= voltage[i] <= 2.5:
                 if 0 <= i <= 3:
-                    self.da1.set_voltage(voltage=voltage[i], ch=6+i*3)
+                    self.da1.set_voltage(voltage=voltage[i], ch=6 + i * 3)
                     self.da1.set_output(onoff=1)
                 elif 4 <= i <= 7:
-                    self.da2.set_voltage(voltage=voltage[i], ch=6+(i-4)*3)
+                    self.da2.set_voltage(voltage=voltage[i], ch=6 + (i - 4) * 3)
                     self.da2.set_output(onoff=1)
             else:
                 print('!!!!ERROR!!!!')
@@ -778,7 +783,7 @@ class multi_hemt(object):
         voltage = ret
         return voltage
 
-
 # written by K.Urushihara
 # 2017/07/18 T.Inaba: add multi_mixer, multi_hemt
 # 2017/07/21 T.Inaba: minor changes (np.array->list comprehension, double quotation, PEP)
+# 2017/08/04 T.Inaba: add and debug single system
