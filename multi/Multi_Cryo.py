@@ -367,7 +367,7 @@ class hemt(object):
         1. voltage: monitor voltage [V]
             Type: float list
         """
-        ret = self.ad.query_voltage()
+        ret = self.ad.query_input()
         voltage = list(map(float, ret))
         return voltage
 
@@ -380,7 +380,29 @@ class multi_mixer(object):
 
     ARGUMENTS
     ================
-    Later
+    1. sisda: name of the D/A board of SIS mixer registered in the IP_table
+        Type: string
+        ------------
+        sisda1: For Beam 1 and 2. (ch 0-3)
+            Default: 'CPZ340816a'
+        sisda2: For Beam 3 and 4. (ch 4-7)
+            Default: 'CPZ340816b'
+        sisda3: For 230 GHz. (ch 8-11)
+            Default: 'CPZ340816c'
+    2. loda: name of the D/A board of LO attenuator registered in the IP_table
+        Type: string
+        ------------
+        loda1: For 115 GHz. (ch 0-7)
+            Default: 'CPZ340516a'
+        loda2: For 230 GHz. (ch 8-9)
+            Default: 'CPZ340516b'
+    3. sisad: name of the A/D board of SIS mixer registered in the IP_table
+        Type: string
+        Default: 'CPZ3177a'
+    4. device_table: file path of the IP table
+        Type: string
+        Default: '/home/amigos/NASCORX-master/base/IP_table_115.txt'
+
     """
 
     def __init__(self, sisda1='CPZ340816a', sisda2='CPZ340816b', sisda3='CPZ340816c',
@@ -610,10 +632,15 @@ class multi_hemt(object):
     ================
     1. hemtda: name of the D/A board of SIS mixer registered in the IP_table
         Type: string
-        Default: 'CPZ340816'
+        ------------
+        hemtda1: For Beam 1 and 2.
+            Default: 'CPZ340816a'
+        ------------
+        hemtda2: For Beam 3 and 4.
+            Default: 'CPZ340816b'
     2. hemtad: name of the A/D board of SIS mixer registered in the IP_table
         Type: string
-        Default: 'CPZ3177'
+        Default: 'CPZ3177b'
     3. device_table: file path of the IP table
         Type: string
         Default: '/home/amigos/NASCORX-master/base/IP_table_115.txt'
