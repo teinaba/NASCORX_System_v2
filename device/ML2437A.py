@@ -2,7 +2,6 @@
 # _*_ coding: UTF-8 _*_
 
 import time, sys
-sys.path.append('/home/amigos/pymeasure2-master/')
 import pymeasure
 
 class ml2437a(object):
@@ -165,3 +164,4 @@ class ml2437a(object):
         return count
 
 #written by K.Urushihara
+# 2017/08/29 T.Inaba: delete sys.path for pymeasure

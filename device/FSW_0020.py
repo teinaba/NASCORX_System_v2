@@ -3,7 +3,6 @@
 
 #import modules
 import time, sys
-sys.path.append('/home/amigos/pymeasure2-master/')
 import pymeasure
 
 class fsw_0020(object):
@@ -288,3 +287,4 @@ class fsw_0020(object):
         return temp
 
 #written by K.Urushihara
+# 2017/08/29 T.Inaba: delete sys.path for pymeasure
