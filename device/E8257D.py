@@ -3,7 +3,6 @@
 
 #import modules
 import time, sys
-sys.path.append('/home/amigos/pymeasure2-master/')
 import pymeasure
 
 class e8257d(object):
@@ -177,3 +176,4 @@ class e8257d(object):
         return ret
   
 #written by K.Urushihara
+# 2017/08/29 T.Inaba: delete sys.path for pymeasure
