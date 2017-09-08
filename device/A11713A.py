@@ -2,7 +2,6 @@
 # _*_ coding: UTF-8 _*_
 
 import time, sys
-sys.path.append('/home/amigos/pymeasure2-master/')
 import pymeasure
 
 class a11713a:
@@ -52,3 +51,5 @@ add comments about prog_att()
 change IP and GPIB address.
 *************
 '''
+
+# 2017/09/08 T.Inaba: delete sys.path to pymeasure
