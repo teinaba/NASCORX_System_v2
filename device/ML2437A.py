@@ -164,4 +164,4 @@ class ml2437a(object):
         return count
 
 #written by K.Urushihara
-# 2017/08/29 T.Inaba: delete sys.path for pymeasure
+# 2017/08/29 T.Inaba: delete sys.path to pymeasure

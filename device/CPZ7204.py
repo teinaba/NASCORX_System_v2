@@ -4,7 +4,6 @@
 
 #import modules
 import time, sys
-sys.path.append('/home/amigos/pyinterface-master/')
 import pyinterface
 
 class cpz7204(object):
@@ -144,3 +143,4 @@ class cpz7204(object):
         return 
 
 #written by K.Urushihara
+# 2017/09/08 T.Inaba: delete sys.path to pyinterface
