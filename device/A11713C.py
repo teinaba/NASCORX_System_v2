@@ -4,7 +4,6 @@
 
 #import modules
 import time, sys
-sys.path.append('/home/amigos/pymeasure2-master/')
 import pymeasure
 
 class a11713c(object):
@@ -284,4 +283,5 @@ class a11713c(object):
         return voltage
 
 # written by K.Urushihara
-# 2017/07/31 T.Inaba: fix a mistake (add , to modellist)
+# 2017/07/31 T.Inaba: fix a mistake (add "," to modellist)
+# 2017/09/08 T.Inaba: delete sys.path to pymeasure
