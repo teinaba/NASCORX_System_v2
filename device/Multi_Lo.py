@@ -5,7 +5,7 @@
 # import modules
 import sys, time
 sys.path.append('/home/amigos/pymeasure2-master/')
-import pymeasure
+
 
 sys.path.append('/home/amigos/NASCORX_System-master/device/')
 import E8257D, MG3692C, FSW_0020
@@ -701,3 +701,4 @@ class multi_secondlo(object):
 
 # written by K.Urushihara
 # 2017/07/28 T.Inaba: add multi systems
+# 2017/07/30 T.Inaba: fix some mistakes around .format

@@ -297,8 +297,8 @@ class hemt(object):
         '''
         if 0.0<=voltage<=2.0:
             if 0<=ch<=15:
-                self.davc.set_voltage(voltage=voltage, ch=ch)
-                self.davc.set_output(onoff=1)
+                self.da.set_voltage(voltage=voltage, ch=ch)
+                self.da.set_output(onoff=1)
             else:
                 print('!!!!ERROR!!!!')
                 print('invalid ch: '+str(ch))
