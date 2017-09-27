@@ -3,14 +3,13 @@
 
 
 #import modules
-import time, sys
 import pymeasure
 
 class a11713c(object):
     '''
     DESCRIPTION
     ================
-    This class cntrols the Agilent 11713C
+    This class controls the Agilent 11713C
 
     ARGUMENTS
     ================
@@ -26,7 +25,13 @@ class a11713c(object):
         self.IP = IP
         self.port = port
         self.com = pymeasure.ethernet(IP, port)
-        
+
+    def query_IDN(self):
+        self.com.open()
+        self.com.send('*IDN?')
+        ret = self.com.readline()
+        return ret
+
     def set_model(self, model, ch):
         """        
         DESCRIPTION
@@ -245,7 +250,6 @@ class a11713c(object):
         ================
         1. voltage: supply voltage
             Type: string list ('OFF', 'P5', 'P15', 'P24' or 'USER')
-
         """
         self.com.open()
         self.com.send('CONFigure:BANK1?')
@@ -282,6 +286,83 @@ class a11713c(object):
         voltage = [bank1, bank2]
         return voltage
 
+    def switch(self, onoff, ch):
+        """
+        DESCRIPTION
+        ================
+        This function switches IF switch CLOSE and OPEN.
+
+        ARGUMENTS
+        ================
+        1. onoff
+            Number : "0" or "1" (0=CLOSE or 1=OPEN).
+            Type   : int
+            Default: Nothing.
+        2. ch
+            Number : "(@bnn)"
+                     where "b" is the bank number and "nn" is channel number
+            Type   : string
+            Default: Nothing.
+            Example: "(@104)", "(@104, 107, 201, 206)", "(@101:109)"
+            comment: See the Official Manual of Agilent 11713B/C
+
+        RETURNS
+        ================
+        Nothing.
+        """
+
+        self.com.open()
+        if onoff == 0:
+            self.com.send(':CLOSe {}'.format(ch))
+        elif onoff == 1:
+            self.com.send(':OPEn {}'.format(ch))
+        else:
+            print('!!!!ERROR!!!!'
+                  'INVALID NUMBER: {}'
+                  'AVAILABLE: "0" or "1"'.format(onoff))
+        self.com.close()
+        return
+
+    def switch_all_ch_close(self):
+        """
+        DESCRIPTION
+        ================
+        This function switches all IF switches CLOSE.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.com.open()
+        self.com.send(':CLOSe:ALL')
+        self.com.close()
+        return
+
+    def switch_all_ch_open(self):
+        """
+        DESCRIPTION
+        ================
+        This function switches all IF switches OPEN.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.com.open()
+        self.com.send(':OPEn:ALL')
+        self.com.close()
+        return
+
+
 # written by K.Urushihara
 # 2017/07/31 T.Inaba: fix a mistake (add "," to modellist)
 # 2017/09/08 T.Inaba: delete sys.path to pymeasure
+# 2017/09/27 T.Inaba: created Switch methods.
