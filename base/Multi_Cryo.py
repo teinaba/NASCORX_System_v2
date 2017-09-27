@@ -3,10 +3,9 @@
 
 
 # import modules
-import sys
-
-sys.path.append('/home/amigos/NASCORX_System-master/device/')
-import CPZ3177, CPZ340516, CPZ340816
+import NASCORX_System.device.CPZ3177 as CPZ3177
+import NASCORX_System.device.CPZ340516 as CPZ340516
+import NASCORX_System.device.CPZ340816 as CPZ340816
 
 
 class mixer(object):
@@ -32,7 +31,7 @@ class mixer(object):
     """
 
     def __init__(self, sisda='CPZ340816a', loda='CPZ340516a', sisad='CPZ3177a',
-                 device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
+                 device_table='/home/amigos/NASCORX_System-master/NASCORX_System/base/device_table_115.txt'):
         self.sisda = sisda
         self.loda = loda
         self.sisad = sisad
@@ -251,11 +250,11 @@ class hemt(object):
         Default: 'CPZ3177'
     3. device_table: file path of the IP table
         Type: string
-        Default: '/home/amigos/NASCORX_System-master/base/IP_table_115.txt'
+        Default: '/home/amigos/NASCORX_System/base/IP_table_115.txt'
     """
 
     def __init__(self, hemtda='CPZ340816a', hemtad='CPZ3177b',
-                 device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
+                 device_table='/home/amigos/NASCORX_System-master/NASCORX_System/base/device_table_115.txt'):
         self.hemtda = hemtda
         self.hemtad = hemtad
         self.device_table = device_table
@@ -426,7 +425,7 @@ class multi_mixer(object):
 
     def __init__(self, sisda1='CPZ340816a', sisda2='CPZ340816b', sisda3='CPZ340816c',
                  loda1='CPZ340516a', loda2='CPZ340516b', sisad='CPZ3177a',
-                 device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
+                 device_table='/home/amigos/NASCORX_System-master/NASCORX_System/base/device_table_115.txt'):
         # define
         self.sisda1 = sisda1  # for beam 1-2
         self.sisda2 = sisda2  # for beam 3-4
@@ -520,40 +519,26 @@ class multi_mixer(object):
         Vmix_Limit = 30.0  # [mV]
         Vda = [1.0 / 3.0 * float(value) for value in Vmix]
         for i in range(12):
-            if 0 <= i <= 3:  # for beam 1-2
-                if 0.0 <= Vmix[i] <= Vmix_Limit:
+            if 0.0 <= Vmix[i] <= Vmix_Limit:
+                if 0 <= i <= 3:  # for beam 1-2
                     self.davc1.set_voltage(voltage=Vda[i], ch=i)
-                    self.davc1.set_output(onoff=1)
-                elif Vmix[i] is None:
-                    pass
-                else:
-                    msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
-                                                 'Invalid Voltage: {0} [V]'.format(Vmix),
-                                                 'Available Voltage: 0.0 -- {0} [V]'.format(Vmix_Limit))
-                    raise ValueError(msg)
-            elif 4 <= i <= 7:  # for beam 3-4
-                if 0.0 <= Vmix[i] <= Vmix_Limit:
+                elif 4 <= i <= 7:  # for beam 3-4
                     self.davc2.set_voltage(voltage=Vda[i], ch=i-4)
-                    self.davc2.set_output(onoff=1)
-                elif Vmix[i] is None:
-                    pass
-                else:
-                    msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
-                                                 'Invalid Voltage: {0} [V]'.format(Vmix),
-                                                 'Available Voltage: 0.0 -- {0} [V]'.format(Vmix_Limit))
-                    raise ValueError(msg)
-            elif 8 <= i <= 11:  # for 230GHz
-                if 0.0 <= Vmix[i] <= Vmix_Limit:
-                    self.davc3.set_voltage(voltage=Vda[i], ch=i-8)
-                    self.davc3.set_output(onoff=1)
-                elif Vmix[i] is None:
-                    pass
-                else:
-                    msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
-                                                 'Invalid Voltage: {0} [V]'.format(Vmix),
-                                                 'Available Voltage: 0.0 -- {0} [V]'.format(Vmix_Limit))
-                    raise ValueError(msg)
-            return
+                elif 8 <= i <= 11:  # for 230GHz
+                    if 0.0 <= Vmix[i] <= Vmix_Limit:
+                        self.davc3.set_voltage(voltage=Vda[i], ch=i-8)
+            elif Vmix[i] is None:
+                pass
+            else:
+                msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
+                                             'Invalid Voltage: {0} [V]'.format(Vmix),
+                                             'Available Voltage: 0.0 -- {0} [V]'.format(Vmix_Limit))
+                raise ValueError(msg)
+        self.davc1.set_output(onoff=1)
+        self.davc2.set_output(onoff=1)
+        self.davc3.set_output(onoff=1)
+
+        return
 
     def query_sisv(self):
         """
@@ -689,7 +674,7 @@ class multi_hemt(object):
     """
 
     def __init__(self, hemtda1='CPZ340816a', hemtda2='CPZ340816b', hemtad='CPZ3177b',
-                 device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
+                 device_table='/home/amigos/NASCORX_System-master/NASCORX_System/base/device_table_115.txt'):
         # define
         self.hemtda1 = hemtda1
         self.hemtda2 = hemtda2
@@ -891,9 +876,398 @@ class multi_hemt(object):
         return voltage
 
 
+class multi_box(object):
+
+    def __init__(self, boxda1='CPZ340816a', boxda2='CPZ340816b', boxda3='CPZ340816c',
+                 loda1='CPZ340516a', loda2='CPZ340516b', boxad1='CPZ3177a', boxad2='CPZ3177b',
+                 device_table='/home/amigos/NASCORX_System-master/NASCORX_System/base/device_table_115.txt'):
+        # define
+        self.boxda1 = boxda1  # for beam 1-2
+        self.boxda2 = boxda2  # for beam 3-4
+        self.boxda3 = boxda3  # for 230GHz
+        self.loda1 = loda1  # for ch 1-8
+        self.loda2 = loda2  # for ch 9-10
+        self.boxad1 = boxad1
+        self.boxad2 = boxad2
+        self.device_table = device_table
+        # search board number
+        self.nboxda1 = self._board_search_(device=self.boxda1)
+        self.nboxda2 = self._board_search_(device=self.boxda2)
+        self.nboxda3 = self._board_search_(device=self.boxda3)
+        self.nloda1 = self._board_search_(device=self.loda1)
+        self.nloda2 = self._board_search_(device=self.loda2)
+        self.nboxad1 = self._board_search_(device=self.boxad1)
+        self.nboxad2 = self._board_search_(device=self.boxad2)
+        # import board control module
+        self.davc1 = CPZ340816.cpz340816(dev=self.nboxda1[1])  # vc = voltage control ??
+        self.davc2 = CPZ340816.cpz340816(dev=self.nboxda2[1])
+        self.davc3 = CPZ340816.cpz340816(dev=self.nboxda3[1])
+        self.dacc1 = CPZ340516.cpz340516(dev=self.nloda1[1])  # cc = current control ??
+        self.dacc2 = CPZ340516.cpz340516(dev=self.nloda2[1])
+        self.ad1 = CPZ3177.cpz3177(dev=self.nboxad1[1])
+        self.ad2 = CPZ3177.cpz3177(dev=self.nboxad2[1])
+        # settings
+        self.dacc1.set_Irange(mode='DA_0_100mA')
+        self.dacc2.set_Irange(mode='DA_0_100mA')
+        self.ad1.set_mode(mode='diff')
+        self.ad1.set_input_range(Vrange='AD_5V')
+        self.ad2.set_mode(mode='single')
+        self.ad2.set_input_range(Vrange='AD_2P5V')
+        return
+
+    def _board_search_(self, device):
+        f = open(self.device_table, 'r')
+        for line in f:
+            dev = line.strip().split(',')
+            if device in dev:
+                info1 = int(dev[1].strip())
+                break
+            else:
+                pass
+        f.close()
+        ret = [device, info1]
+        return ret
+
+    def close_box(self):
+        """
+        DESCRIPTION
+        ================
+        This function close the remote connection.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.davc1.close_board()
+        self.davc2.close_board()
+        self.davc3.close_board()
+        self.dacc1.close_board()
+        self.dacc2.close_board()
+        self.ad1.close_board()
+        self.ad2.close_board()
+        return
+
+    def set_sisv(self, Vmix):
+        """
+        DESCRIPTION
+        ================
+        This function sets the mixer bias for all mixers.
+
+        ARGUMENTS
+        ================
+        1. Vmix: mixer bias [mV]
+            Number: 0 - 50 [mV]
+            Type: float list
+            Length: 12
+            Default: Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        # check input list length
+        if len(Vmix) == 12:
+            pass
+        else:
+            msg = '{0}\n{1}\n{2}'.format('Input Invalid Length Error',
+                                         'Invalid list Length: {0}'.format(len(Vmix)),
+                                         'Available Length: 12')
+            raise ValueError(msg)
+        # set SIS V
+        Vmix_Limit = 30.0  # [mV]
+        Vda = [1.0 / 3.0 * float(value) for value in Vmix]
+        for i in range(12):
+            if 0.0 <= Vmix[i] <= Vmix_Limit:
+                if 0 <= i <= 3:  # for beam 1-2
+                    self.davc1.set_voltage(voltage=Vda[i], ch=i)
+                elif 4 <= i <= 7:  # for beam 3-4
+                    self.davc2.set_voltage(voltage=Vda[i], ch=i-4)
+                elif 8 <= i <= 11:  # for 230GHz
+                    if 0.0 <= Vmix[i] <= Vmix_Limit:
+                        self.davc3.set_voltage(voltage=Vda[i], ch=i-8)
+            elif Vmix[i] is None:
+                pass
+            else:
+                msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
+                                             'Invalid Voltage: {0} [V]'.format(Vmix),
+                                             'Available Voltage: 0.0 -- {0} [V]'.format(Vmix_Limit))
+                raise ValueError(msg)
+        self.davc1.set_output(onoff=1)
+        self.davc2.set_output(onoff=1)
+        self.davc3.set_output(onoff=1)
+        return
+
+    def query_sisv(self):
+        """
+        DESCRIPTION
+        ================
+        This function queries the mixer bias for all mixers.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. Vmix: mixer bias [mV]
+            Type: float list
+            Length: 12
+        """
+        ret1 = self.davc1.query_voltage()
+        ret2 = self.davc2.query_voltage()
+        ret3 = self.davc3.query_voltage()
+        ret = ret1[:4] + ret2[:4] + ret3[:4]
+        Vmix = [float(value) * 3.0 for value in ret]
+        return Vmix
+
+    def monitor_sis(self, divided=None):
+        """
+        DESCRIPTION
+        ================
+        This function queries the mixer monitor voltage and current for all mixers.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. voltage: monitor voltage [V]
+            Type: float list
+            Length: 12
+        2. current: monitor current [V]
+            Type: float list
+            Length: 12
+        """
+        ret_raw = self.ad1.query_input()
+        ret = list(map(float, ret_raw))  # ret --> float
+        sisV_mon = ret[0::2]  # [0:23:2]のほうがいい??
+        sisI_mon = ret[1::2]
+        if divided is True:
+            return sisV_mon, sisI_mon
+        else:
+            return ret
+
+    def set_loatt(self, att):
+        """
+        DESCRIPTION
+        ================
+        This function sets the 1st Lo attenuation level for all channels.
+
+        ARGUMENTS
+        ================
+        1. att: attenuation level [mA]
+            Number: 0 - 100 [mA]
+            Type: float list
+            Length: 12
+            Default: Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        for ch in range(10):
+            if 0.0 <= att[ch] <= 100.0:
+                if 0 <= ch <= 7:
+                    self.dacc1.set_current(current=float(att[ch])*1e-3, ch=ch)
+                    self.dacc1.set_output(onoff=1)
+                elif 8 <= ch <= 9:
+                    self.dacc2.set_current(current=float(att[ch])*1e-3, ch=ch-8)
+                    self.dacc2.set_output(onoff=1)
+            elif att[ch] is None:
+                pass
+            else:
+                msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
+                                             'Invalid att: {0}'.format(att[ch]),
+                                             'Available att: 0.0 -- 100.0 [mA]')
+                raise ValueError(msg)
+        return
+
+    def query_loatt(self):
+        """
+        DESCRIPTION
+        ================
+        This function queries the 1st Lo attenuation level for all channels.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. att: attenuation level [mA]
+            Type: float list
+            Length: 12
+        """
+        ret1 = self.dacc1.query_current()
+        ret2 = self.dacc2.query_current()
+        ret = ret1 + ret2[:2]
+        att = [float(value) * 3.0 for value in ret]
+        return att
+
+    def set_Vd(self, voltage):
+        """
+        DESCRIPTION
+        ================
+        This function sets the drain voltage for all amplifiers.
+
+        ARGUMENTS
+        ================
+        1. voltage: drain voltage [V]
+            Number: 0 -- 2.0 [V].da
+            Type: float list
+            Length: 8
+            Default: Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        # check input list length
+        if len(voltage) == 8:
+            pass
+        else:
+            msg = '{0}\n{1}\n{2}'.format('Input Invalid Length Error',
+                                         'Invalid list Length: {0}'.format(len(voltage)),
+                                         'Available Length: 8')
+            raise ValueError(msg)
+        # set Vd
+        for i in range(8):
+            if 0.0 <= voltage[i] <= 2.0:
+                if 0 <= i <= 3:
+                    self.davc1.set_voltage(voltage=voltage[i], ch=4+i*3)
+                elif 4 <= i <= 7:
+                    self.davc2.set_voltage(voltage=voltage[i], ch=4+(i-4)*3)
+            elif voltage[i] is None:
+                pass
+            else:
+                msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
+                                             'Invalid Voltage: {0} [V]'.format(voltage[i]),
+                                             'Available Voltage: 0.0 -- 2.0 [V]')
+                raise ValueError(msg)
+        self.davc1.set_output(onoff=1)
+        self.davc2.set_output(onoff=1)
+        return
+
+    def set_Vg1(self, voltage):
+        """
+        DESCRIPTION
+        ================
+        This function sets the gate voltage 1 for all amplifiers.
+
+        ARGUMENTS
+        ================
+        1. voltage: gate voltage [V]
+            Number: -2.5 -- +2.5 [V]
+            Type: float list
+            Length: 8
+            Default: Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        # check input list length
+        if len(voltage) == 8:
+            pass
+        else:
+            msg = '{0}\n{1}\n{2}'.format('Input Invalid Length Error',
+                                         'Invalid list Length: {0}'.format(len(voltage)),
+                                         'Available Length: 8')
+            raise ValueError(msg)
+        # set Vg1
+        for i in range(8):
+            if -2.5 <= voltage[i] <= 2.5:
+                if 0 <= i <= 3:
+                    self.davc1.set_voltage(voltage=voltage[i], ch=5+i*3)
+                elif 4 <= i <= 7:
+                    self.davc2.set_voltage(voltage=voltage[i], ch=5+(i-4)*3)
+            elif voltage[i] is None:
+                pass
+            else:
+                msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
+                                             'Invalid Voltage: {0} [V]'.format(voltage[i]),
+                                             'Available Voltage: -2.5 -- +2.5 [V]')
+                raise ValueError(msg)
+        self.davc1.set_output(onoff=1)
+        self.davc2.set_output(onoff=1)
+        return
+
+    def set_Vg2(self, voltage):
+        """
+        DESCRIPTION
+        ================
+        This function sets the gate voltage 2 for all amplifiers.
+
+        ARGUMENTS
+        ================
+        1. voltage: gate voltage [V]
+            Number: -2.5 -- +2.5 [V]
+            Type: float list
+            Length: 8
+            Default: Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        # check input list length
+        if len(voltage) == 8:
+            pass
+        else:
+            msg = '{0}\n{1}\n{2}'.format('Input Invalid Length Error',
+                                         'Invalid list Length: {0}'.format(len(voltage)),
+                                         'Available Length: 8')
+            raise ValueError(msg)
+        # set Vg2
+        for i in range(8):
+            if -2.5 <= voltage[i] <= 2.5:
+                if 0 <= i <= 3:
+                    self.davc1.set_voltage(voltage=voltage[i], ch=6+i*3)
+                elif 4 <= i <= 7:
+                    self.davc2.set_voltage(voltage=voltage[i], ch=6+(i-4)*3)
+            elif voltage[i] is None:
+                pass
+            else:
+                msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
+                                             'Invalid Voltage: {0} [V]'.format(voltage[i]),
+                                             'Available Voltage: -2.5 -- +2.5 [V]')
+                raise ValueError(msg)
+        self.davc1.set_output(onoff=1)
+        self.davc2.set_output(onoff=1)
+        return
+
+    def monitor_hemt(self):
+        """
+        DESCRIPTION
+        ================
+        This function queries the HEMT monitor voltage.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. voltage: monitor voltage [V]
+            Type: float list
+        """
+        ret = self.ad2.query_input()
+        voltage = list(map(float, ret))
+        return voltage
+
+
+# History
+# -------
 # written by K.Urushihara
 # 2017/07/18 T.Inaba: add multi_mixer, multi_hemt
 # 2017/07/21 T.Inaba: minor changes (np.array->list comprehension, double quotation, PEP)
 # 2017/08/04 T.Inaba: add and debug single system
 # 2017/08/05 T.Inaba: add ValueError and None->pass.
 # 2017/09/15 T.Inaba: modified monitor_hemt, and other minor changes.
+# 2017/09/18 T.Inaba: changed directory structure, import setting. created __init__.py
+# 2017/09/25 T.Inaba: created multi_box class.
