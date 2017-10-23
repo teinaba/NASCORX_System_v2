@@ -2,7 +2,7 @@
 # _*_ coding: UTF-8 _*_
 
 #import modules
-import urllib2
+import urllib.request
 
 class tr71w(object):
     '''
@@ -19,7 +19,7 @@ class tr71w(object):
 
     def __init__(self, IP='192.168.100.1'):
         self.IP = IP
-        self.sock = urllib2.Request('http://'+self.IP+'/B/crrntdata/cdata.txt')
+        self.url = 'http://'+self.IP+'/B/crrntdata/cdata.txt'
         
     def temp(self):
         """        
@@ -35,9 +35,10 @@ class tr71w(object):
         ================
         1. The room temperature [K]: float type
         """
-        res = urllib2.urlopen(self.sock)
+        res = urllib.request.urlopen(self.url)
         page = res.read()
-        raw_data = page.split('\r\n')
+        decoded_page = page.decode('shift_jis')
+        raw_data = decoded_page.split('\r\n')
         raw_T1 = raw_data[5].split('=')
         raw_T2 = raw_data[6].split('=')
         if raw_T1[1] != '----':
@@ -50,4 +51,8 @@ class tr71w(object):
             temp2 = 0
         return temp1, temp2
 
+
+# History
+# -------
 #written by K.Urushihara
+# 2017.10.23 T.Inaba : adapted to python3

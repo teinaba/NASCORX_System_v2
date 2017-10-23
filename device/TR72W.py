@@ -2,7 +2,7 @@
 # _*_ coding: UTF-8 _*_
 
 #import modules
-import urllib2
+import urllib.request
 
 class tr72w(object):
     '''
@@ -19,7 +19,7 @@ class tr72w(object):
 
     def __init__(self, IP='192.168.100.1'):
         self.IP = IP
-        self.sock = urllib2.Request('http://'+self.IP+'/B/crrntdata/cdata.txt')
+        self.url = 'http://'+self.IP+'/B/crrntdata/cdata.txt'
         
     def temp(self):
         """        
@@ -35,9 +35,10 @@ class tr72w(object):
         ================
         1. The room temperature [K]: float type
         """
-        res = urllib2.urlopen(self.sock)
+        res = urllib.request.urlopen(self.url)
         page = res.read()
-        raw_data = page.split('\r\n')
+        decoded_page = page.decode('shift_jis')
+        raw_data = decoded_page.split('\r\n')
         raw_T = raw_data[5].split('=')
         temperature = float(raw_T[1])
         return temperature
@@ -54,13 +55,18 @@ class tr72w(object):
         
         RETURNS
         ================
-        1. The room humidity [%]: float type        
+        1. The room humidity [%]: float type
         """
-        res = urllib2.urlopen(self.sock)
+        res = urllib.request.urlopen(self.url)
         page = res.read()
-        raw_data = page.split('\r\n')
+        decoded_page = page.decode('shift_jis')
+        raw_data = decoded_page.split('\r\n')
         raw_H = raw_data[6].split('=')
         humidity = float(raw_H[1])
         return humidity
 
+
+# History
+# -------
 #written by K.Urushihara
+# 2017.10.23 T.Inaba : adapted to python3
