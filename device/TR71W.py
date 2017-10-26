@@ -1,28 +1,29 @@
 #! /usr/bin/env python
 # _*_ coding: UTF-8 _*_
 
-#import modules
+# import modules
 import urllib.request
 
+
 class tr71w(object):
-    '''
+    """
     DESCRIPTION
     ================
-    This class cntrols the thermometer TR-71W.
+    This class controls the thermometer TR-71W.
 
     ARGUMENTS
     ================
     1. IP: IP address of the TR-71W
         Type: string
         Default: '192.168.100.1'
-    '''
+    """
 
     def __init__(self, IP='192.168.100.1'):
         self.IP = IP
         self.url = 'http://'+self.IP+'/B/crrntdata/cdata.txt'
         
     def temp(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the room temperature.
@@ -54,5 +55,5 @@ class tr71w(object):
 
 # History
 # -------
-#written by K.Urushihara
+# written by K.Urushihara
 # 2017.10.23 T.Inaba : adapted to python3
