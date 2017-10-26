@@ -1,1 +1,1 @@
-__author__ = 'tetsu'
+#! /usr/bin/env python
