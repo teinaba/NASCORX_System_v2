@@ -1063,7 +1063,7 @@ class multi_box(object):
         1. att: attenuation level [mA]
             Number: 0 - 100 [mA]
             Type: float list
-            Length: 12
+            Length: 10
             Default: Nothing.
 
         RETURNS
@@ -1263,7 +1263,7 @@ class multi_box(object):
 
 # History
 # -------
-# written by K.Urushihara
+# written by T.Inaba
 # 2017/07/18 T.Inaba: add multi_mixer, multi_hemt
 # 2017/07/21 T.Inaba: minor changes (np.array->list comprehension, double quotation, PEP)
 # 2017/08/04 T.Inaba: add and debug single system
