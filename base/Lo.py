@@ -3,11 +3,12 @@
 
 
 #import modules
-import sys, time, numpy
-sys.path.append('/home/amigos/pymeasure2-master/')
+import time
 import pymeasure
-sys.path.append('/home/amigos/NASCORX_System-master/device/')
-import E8257D, MG3692C, FSW_0020
+import NASCORX_System.device.E8257D as E8257D
+import NASCORX_System.device.MG3692C as MG3692C
+import NASCORX_System.device.FSW_0020 as FSW_0020
+
 
 class firstlo(object):
     '''
@@ -28,7 +29,8 @@ class firstlo(object):
         Type: string
         Default: '/home/amigos/NASCORX-master/base/device_table_115.txt'
     '''
-    def __init__(self, multiplier=6, device='E8257D', device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
+    def __init__(self, multiplier=6, device='E8257D',
+                 device_table='/home/amigos/NASCORX_System-master/NASCORX_System/base/device_table_115.txt'):
         self.multiplier = int(multiplier)
         self.device = device
         self.device_table = device_table
