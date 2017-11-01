@@ -2,7 +2,7 @@
 # _*_ coding: UTF-8 _*_
 
 
-#import modules
+# import modules
 import NASCORX_System.device.A11713B as A11713B
 import NASCORX_System.device.A11713C as A11713C
 
@@ -324,7 +324,7 @@ class multi_switch(object):
         ================
         1. command
             Number : "onoff-ch" (0=CLOSE, 1=OPEN. ch="(@bnn)")
-            Type   : string
+            Type   : str List
             Default: Nothing.
             Example: "1-(@104)", "0-(@104, 107, 201, 206)", "0-(@101:109)"
             comment: See the Official Manual of Agilent 11713B/C
@@ -371,8 +371,16 @@ class multi_switch(object):
         ================
         Nothing.
         """
-        self.switch_all_ch_open()
+        self.driver.switch_all_ch_open()
         return
+
+
+class multi_IF(object):
+
+    def __init__(self):
+        self.patt_ctrl = multi_prog_att()
+        self.switch_ctrl = multi_switch()
+        pass
 
 
 # History
