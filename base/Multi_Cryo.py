@@ -101,7 +101,7 @@ class mixer(object):
         """
         Vmix_Limit = 30.0  # mV
         Vda = (1.0 / 3.0) * float(Vmix)  # mixer bias[mV] --> D/A voltage[V]
-        if 0.0 <= Vmix <= Vmix_Limit:
+        if -Vmix_Limit <= Vmix <= Vmix_Limit:
             if 0 <= ch <= 15:
                 self.davc.set_voltage(voltage=Vda, ch=ch)
                 self.davc.set_output(onoff=1)
@@ -116,7 +116,7 @@ class mixer(object):
         else:
             msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
                                          'Invalid Voltage: {0} [V]'.format(Vmix),
-                                         'Available Voltage: 0.0 -- {0} [V]'.format(Vmix_Limit))
+                                         'Available Voltage: 0.0 -- {0} [mV]'.format(Vmix_Limit))
             raise ValueError(msg)
             #print('!!!!ERROR!!!!')
             #print('Invalid Voltage: {0}'.format(Vmix))
@@ -162,10 +162,6 @@ class mixer(object):
         """
         ret = self.ad.query_input()
         Vmix_mon = list(map(float, ret))
-        #ret = self.ad.query_input()
-        #Vmix_mon = []
-        #for i in range(len(ret)):
-        #    Vmix_mon.append(float(ret[i]))
         return Vmix_mon
 
     def set_loatt(self, att, ch):
@@ -206,9 +202,6 @@ class mixer(object):
                                          'Invalid att: {0} [mA]'.format(att),
                                          'Available att: 0.0 -- 100.0 [mA]')
             raise ValueError(msg)
-            #print('!!!!ERROR!!!!')
-            #print('Invalid att: {0}'.format(att))
-            #print('available att: 0.0 - 100.0 [mA]')
         return
 
     def query_loatt(self):
@@ -228,9 +221,6 @@ class mixer(object):
         """
         ret = self.dacc.query_current()
         att = list(map(float, ret))
-        #att = []
-        #for i in range(len(ret)):
-        #    att.append(float(ret[i]) * 1e+3)
         return att
 
 
@@ -519,7 +509,7 @@ class multi_mixer(object):
         Vmix_Limit = 30.0  # [mV]
         Vda = [1.0 / 3.0 * float(value) for value in Vmix]
         for i in range(12):
-            if 0.0 <= Vmix[i] <= Vmix_Limit:
+            if -Vmix_Limit <= Vmix[i] <= Vmix_Limit:
                 if 0 <= i <= 3:  # for beam 1-2
                     self.davc1.set_voltage(voltage=Vda[i], ch=i)
                 elif 4 <= i <= 7:  # for beam 3-4
@@ -532,7 +522,7 @@ class multi_mixer(object):
             else:
                 msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
                                              'Invalid Voltage: {0} [V]'.format(Vmix),
-                                             'Available Voltage: 0.0 -- {0} [V]'.format(Vmix_Limit))
+                                             'Available Voltage: 0.0 -- {0} [mV]'.format(Vmix_Limit))
                 raise ValueError(msg)
         self.davc1.set_output(onoff=1)
         self.davc2.set_output(onoff=1)
@@ -981,7 +971,7 @@ class multi_box(object):
         Vmix_Limit = 30.0  # [mV]
         Vda = [1.0 / 3.0 * float(value) for value in Vmix]
         for i in range(12):
-            if 0.0 <= Vmix[i] <= Vmix_Limit:
+            if -Vmix_Limit <= Vmix[i] <= Vmix_Limit:
                 if 0 <= i <= 3:  # for beam 1-2
                     self.davc1.set_voltage(voltage=Vda[i], ch=i)
                 elif 4 <= i <= 7:  # for beam 3-4
@@ -994,7 +984,7 @@ class multi_box(object):
             else:
                 msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
                                              'Invalid Voltage: {0} [V]'.format(Vmix),
-                                             'Available Voltage: 0.0 -- {0} [V]'.format(Vmix_Limit))
+                                             'Available Voltage: 0.0 -- {0} [mV]'.format(Vmix_Limit))
                 raise ValueError(msg)
         self.davc1.set_output(onoff=1)
         self.davc2.set_output(onoff=1)
@@ -1271,3 +1261,4 @@ class multi_box(object):
 # 2017/09/15 T.Inaba: modified monitor_hemt, and other minor changes.
 # 2017/09/18 T.Inaba: changed directory structure, import setting. created __init__.py
 # 2017/09/25 T.Inaba: created multi_box class.
+# 2017/11/02 T.Inaba: change Vmix range(adapt to minus value).
