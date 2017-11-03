@@ -1,0 +1,136 @@
+[Lo_Freq]
+lo-100ghz = 105
+lo-200ghz = 226.1
+
+[IF_PATT]
+patt1 = 3
+patt2 = 3
+patt3 = 3
+patt4 = 3
+patt5 = 3
+patt6 = 3
+patt7 = 3
+patt8 = 3
+patt9 = 3
+patt10 = 3
+patt11 = 3
+patt12 = 3
+
+[Spectrometer]
+device = XFFTS
+band = 2000[MHz]
+channel = 32768
+be_num = 16
+be1 = 1L-U
+be2 = 1R-L
+be3 = 1L-U
+be4 = 1R-L
+be5 = 2L-U
+be6 = 2R-L
+be7 = 2L-U
+be8 = 2R-L
+be9 = 3L-U
+be10 = 3L-L
+be11 = 3R-U
+be12 = 3L-L
+be13 = 4R-U
+be14 = 4L-L
+be15 = 4R-U
+be16 = 4L-L
+
+[beam1-L]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+
+[beam1-R]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+
+[beam2-L]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+
+[beam2-R]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+
+[beam3-L]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+
+[beam3-R]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+
+[beam4-L]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+
+[beam4-R]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+
+[beam5-L-U]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+
+[beam5-L-L]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+
+[beam5-R-U]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+
+[beam5-R-L]
+sis-v = 9.7
+vd = 9.6
+vg1 = 9.6
+vg2 = 9.6
+lo_att = 14.0
+state = 0
+

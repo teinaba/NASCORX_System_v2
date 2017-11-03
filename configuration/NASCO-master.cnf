@@ -1,0 +1,13 @@
+[Information]
+Telescope : NANTEN2
+Diameter[m] : 4
+Altitude[m] : 4865
+Location : Chile-Atacama
+Receiver : NASCO-RX
+BackEnd  : XFFTS
+
+[Configuration]
+Season : 2018
+Configuration : 4Beam-2Pol-SSB_&_1Beam-2Pol-2SB
+SYS-config : NASCO2018.cnf
+SIS-config : NASCO2018-tuning.cnf
