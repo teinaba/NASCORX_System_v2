@@ -183,9 +183,9 @@ class multi_prog_att(object):
         """
 
         connect = self._ip_search_(device=device)
-        IP = connect[0]
-        port = connect[1]
-        connection = connect[2]
+        IP = connect[1]
+        port = connect[2]
+        connection = connect[3]
         driver = A11713B.a11713b(IP=IP, port=port, connection=connection)
         return driver
 
@@ -386,3 +386,4 @@ class multi_IF(object):
 # History
 # -------
 # written by T.Inaba
+# 2017/11/03 T.Inaba: modify set_driver.
