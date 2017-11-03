@@ -29,9 +29,9 @@ class a11713b(object):
         elif connection == 'LAN':
             self.com = pymeasure.ethernet(self.IP, self.port)
         else:
-            print('!!!!ERROR!!!!'
-                  'INVALID CONNECTION: {}'
-                  'AVAILABLE: "GPIB" or "LAN"'.format(connection))
+            print('!!!!ERROR!!!!\n'
+                  'INVALID CONNECTION: {}\n'
+                  'AVAILABLE: "GPIB" or "LAN"\n'.format(connection))
         return
 
     def query_IDN(self):
@@ -242,4 +242,8 @@ class a11713b(object):
         voltage = bank1
         return voltage
 
+
+# History
+# -------
 # written by T.Inaba
+# 2017/11/03 T.Inaba: add "\n" to error massage.
