@@ -110,17 +110,11 @@ class mixer(object):
                                              'Invalid ch: {0}'.format(ch),
                                              'Available ch: 0 -- 15')
                 raise ValueError(msg)
-                #print('!!!!ERROR!!!!')
-                #print('Invalid ch: {0}'.format(ch))
-                #print('Available ch: {0} - {1}'.format(ch_range[0], str(ch_range[-1])))
         else:
             msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
                                          'Invalid Voltage: {0} [V]'.format(Vmix),
                                          'Available Voltage: 0.0 -- {0} [mV]'.format(Vmix_Limit))
             raise ValueError(msg)
-            #print('!!!!ERROR!!!!')
-            #print('Invalid Voltage: {0}'.format(Vmix))
-            #print('Available Voltage: 0.0 - {0} [mV]'.format(Vmix_Limit))
         return
 
     def query_sisv(self):
@@ -140,9 +134,6 @@ class mixer(object):
         """
         ret = self.davc.query_voltage()
         Vmix = list(map(float, ret))
-        #Vmix = []
-        #for i in ret:
-        #    Vmix.append(i * 3.0)
         return Vmix
 
     def monitor_sis(self):
@@ -194,9 +185,6 @@ class mixer(object):
                                              'Invalid ch: {0}'.format(ch),
                                              'Available ch: 0 -- 7')
                 raise ValueError(msg)
-                #print('!!!!ERROR!!!!')
-                #print('Invalid ch: {0}'.format(ch))
-                #print('Available ch: 0 - 7')
         else:
             msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
                                          'Invalid att: {0} [mA]'.format(att),
@@ -1064,10 +1052,8 @@ class multi_box(object):
             if 0.0 <= att[ch] <= 100.0:
                 if 0 <= ch <= 7:
                     self.dacc1.set_current(current=float(att[ch])*1e-3, ch=ch)
-                    self.dacc1.set_output(onoff=1)
                 elif 8 <= ch <= 9:
                     self.dacc2.set_current(current=float(att[ch])*1e-3, ch=ch-8)
-                    self.dacc2.set_output(onoff=1)
             elif att[ch] is None:
                 pass
             else:
@@ -1075,6 +1061,8 @@ class multi_box(object):
                                              'Invalid att: {0}'.format(att[ch]),
                                              'Available att: 0.0 -- 100.0 [mA]')
                 raise ValueError(msg)
+        self.dacc1.set_output(onoff=1)
+        self.dacc2.set_output(onoff=1)
         return
 
     def query_loatt(self):
@@ -1096,7 +1084,7 @@ class multi_box(object):
         ret1 = self.dacc1.query_current()
         ret2 = self.dacc2.query_current()
         ret = ret1 + ret2[:2]
-        att = [float(value) * 3.0 for value in ret]
+        att = [float(value) * 1e+3 for value in ret]
         return att
 
     def set_Vd(self, voltage):
