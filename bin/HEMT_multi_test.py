@@ -4,11 +4,9 @@
 
 # import modules
 import time
-import sys
 import numpy
 import matplotlib.pyplot as plt
-sys.path.append('/home/amigos/NASCORX_System-master/multi/')
-import Multi_Cryo
+import NASCORX_System.base.Multi_Cryo as Multi_Cryo
 
 
 class Hemt_multi_test(object):
@@ -21,9 +19,9 @@ class Hemt_multi_test(object):
         datetime = time.strftime('%Y%m%d-%H%M%S')
         return datetime
 
-    # +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    # Measurement functions
-    # +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    # +-+-+-+-+-+-+-+-+-+-+-+
+    #  Measurement functions
+    # +-+-+-+-+-+-+-+-+-+-+-+
 
     def swp_vd_meas(self):
         # opening procedure
