@@ -3,12 +3,10 @@
 
 
 # import modules
-import sys, time
-sys.path.append('/home/amigos/pymeasure2-master/')
-
-
-sys.path.append('/home/amigos/NASCORX_System-master/device/')
-import E8257D, MG3692C, FSW_0020
+import time
+import NASCORX_System.device.E8257D as E8257D
+import NASCORX_System.device.MG3692C as MG3692C
+import NASCORX_System.device.FSW_0020 as FSW_0020
 
 
 class firstlo(object):
@@ -32,7 +30,7 @@ class firstlo(object):
     """
 
     def __init__(self, multiplier=6, device='E8257D',
-                 device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
+                 device_table='/home/amigos/NASCORX_System/base/device_table_115.txt'):
         self.multiplier = int(multiplier)
         self.device = device
         self.device_table = device_table
@@ -399,7 +397,7 @@ class multi_firstlo(object):
     """
 
     def __init__(self, multiplier=6, device1='E8257D1', device2='E8257D2',
-                 device_table='/home/amigos/NASCORX_System-master/base/device_table_115.txt'):
+                 device_table='/home/amigos/NASCORX_System/base/device_table_115.txt'):
         # define
         self.multiplier = int(multiplier)
         self.device1 = device1
@@ -702,3 +700,4 @@ class multi_secondlo(object):
 # written by K.Urushihara
 # 2017/07/28 T.Inaba: add multi systems
 # 2017/07/30 T.Inaba: fix some mistakes around .format
+# 2017/09/18 T.Inaba: changed directory structure, import setting. created __init__.py
