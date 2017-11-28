@@ -151,3 +151,7 @@ class Config_handler(object):
     def get_season(self):
         return self.season
 
+
+# History
+# -------
+# written by T.Inaba
