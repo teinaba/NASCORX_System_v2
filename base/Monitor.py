@@ -4,7 +4,7 @@
 
 #import modules
 import sys, time, datetime
-sys.path.append('/home/amigos/NASCORX_System-master/device/')
+sys.path.append('/home/amigos/NASCORX_System/device/')
 import TR71W, TR72W, TPG261, L218
 
 class monitor(object):
