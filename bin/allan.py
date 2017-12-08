@@ -34,7 +34,7 @@ class allan(object):
 
     def get_btemp(self, integtime, repeat):
         sec = int(integtime * repeat)
-        data = client.btempshot(sec=sec)
+        data = client.btemp_oneshot(sec=sec)
         self.btemp = data
         return
 
