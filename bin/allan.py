@@ -11,7 +11,7 @@ import matplotlib.pyplot
 
 import NASCO_XFFTS
 
-client = NASCO_XFFTS.xffts_data_client.date_client()
+client = NASCO_XFFTS.xffts_data_client.data_client()
 
 
 class allan(object):
