@@ -1,23 +1,71 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# import modules
 import time
 import sys
 import os
 import numpy
-import matplotlib.pyplot as plt
+import threading
+import matplotlib.pyplot
 
+import NASCORX_XFFTS
+
+client = NASCORX_XFFTS.xffts_data_client.date_client()
 
 
 class allan(object):
+    spec = None
+    conti = None
+    btemp = None
+
     def __init__(self):
         pass
+
+    def get_spectrum(self, integtime, repeat):
+        data = client.oneshot(integtime=integtime, repeat=repeat)
+        self.spec = data
+        return
+
+    def get_continuum(self, integtime, repeat):
+        data = client.conti_oneshot(integtime=integtime, repeat=repeat)
+        self.conti = data
+        return
+
+    def get_btemp(self, integtime, repeat):
+        sec = int(integtime * repeat)
+        data = client.btempshot(sec=sec)
+        self.btemp = data
+        return
+
+    def measure(self, integtime, repeat):
+        th1 = threading.Thread(target=self.get_spectrum(integtime=integtime, repeat=repeat))
+        th2 = threading.Thread(target=self.get_spectrum(integtime=integtime, repeat=repeat))
+        th3 = threading.Thread(target=self.get_btemp(integtime=integtime, repeat=repeat))
+        th1.setDaemon(True)
+        th2.setDaemon(True)
+        th3.setDaemon(True)
+        th1.start()
+        th2.start()
+        th3.start()
+        th1.join()
+        th2.join()
+        th3.join()
+
+        print('\n'
+              'End Measurement'
+              '\n')
+        return self.spec, self.conti, self.btemp
 
     def tau_calc(self, repeat, integtime):
         tau = numpy.linspace(1, int(repeat/2) - 1, int(repeat/2) - 1) * integtime
         return tau
 
-    def allan_calc(self, data, integtime):
+    def get_data(self, integtime, repeat):
+        allan_data = 'coming soon'
+        return allan_data
+
+    def calc_adev(self, data, integtime):
         repeat = len(data)
         tau = numpy.linspace(1, int(repeat/2) - 1, int(repeat/2) - 1) * integtime
         allan_result = []
@@ -33,7 +81,10 @@ class allan(object):
         allan = numpy.concatenate((numpy.array([tau]), numpy.array([allan_result])), axis=0)
         return allan
 
-    def allan_fitting(self):
+    def fit(self):
+        return
+
+    def plot(self, allan):
         return
 
 
