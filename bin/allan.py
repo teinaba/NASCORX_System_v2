@@ -9,9 +9,9 @@ import numpy
 import threading
 import matplotlib.pyplot
 
-import NASCORX_XFFTS
+import NASCO_XFFTS
 
-client = NASCORX_XFFTS.xffts_data_client.date_client()
+client = NASCO_XFFTS.xffts_data_client.date_client()
 
 
 class allan(object):
