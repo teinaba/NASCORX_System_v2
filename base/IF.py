@@ -3,7 +3,7 @@
 
 
 #import modules
-import NASCORX_System.device.A11713C as A11713C
+from ..device import A11713C
 
 
 class attenuation(object):

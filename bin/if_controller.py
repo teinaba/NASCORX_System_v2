@@ -3,8 +3,8 @@
 # import modules
 import csv
 import time
-import NASCORX_System.base.Multi_IF as Multi_IF
-import NASCORX_System.bin.config_handler as config_handler
+from ..base import Multi_IF
+from ..bin import config_handler
 
 
 class IF_controller(Multi_IF.multi_IF):

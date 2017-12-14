@@ -6,7 +6,7 @@
 import time
 import numpy
 import matplotlib.pyplot as plt
-import NASCORX_System.base.Multi_Cryo as Multi_Cryo
+from ..base import Multi_Cryo
 
 
 class Hemt_multi_test(object):

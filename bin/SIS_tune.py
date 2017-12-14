@@ -1,27 +1,106 @@
 #! /usr/bin/env python
-# _*_ coding: UTF-8 _*_
 
 # import modules
 import time
 import numpy
 import matplotlib.pyplot
-import NASCORX_System.base.Multi_Cryo as Multi_Cryo
+from ..bin import config_handler
+from ..base import Multi_Cryo
 
-class SIS_tune(object):
+
+class IV_curve(object):
+    method = 'IV Curve Measurement'
+    ver = '2017.11.09'
     savedir = '/home/amigos/NASCORX_Measurement/SIStune/'
 
     def __init__(self):
         pass
 
+    def run(self, initV=0.0, finV=8.0, interval=0.1, driver=None, onoff='cnf', reconfigure=True,
+            filefmt='csv'):
+
+        # Print Welcome massage
+        # ----------------------
+        print('\n\n'
+              ' =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n'
+              '   NASCO RX : SIS IV curve Measurement  \n'
+              ' =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n'
+              ' ver - {}\n'
+              '\n\n'.format(self.ver))
+
+        # Input value check
+        # -----------------
+        repeat = self.input_value_check(initV=initV, finV=finV, interval=interval)
+
+        # Check available unit
+        # --------------------
+        if onoff == 'cnf':
+            onoff = config_handler.Config_handler.check_sis_state()
+        else:
+            pass
+
+        # Set Driver
+        # ----------
+        if driver is None: self.driver = Multi_Cryo.multi_box()
+        else: self.driver = driver
+        print('\n'
+              ' PCI board drivers are set.\n'
+              '\n')
+
+        # == Main ========
+        # Measurement part
+        # ----------------
+        AD_data = self.IV_measure(repeat=repeat, initV=initV, interval=interval, onoff=onoff)
+        lo_att = self.driver.query_loatt()
+
+        # Data saving part
+        # ----------------
+        # TODO : Loどうする??
+        datetime = time.strftime('%Y%m%d-%H%M')
+        filename = self.savedir + 'SISIV_{}.{}'.format(datetime, filefmt)
+        header = 'D/A-SISV,' \
+                 '1L-V,1L-I,1R-V,1R-I,2L-V,2L-I,2R-V,2R-I,' \
+                 '3L-V,3L-I,3R-V,3R-I,4L-V,4L-I,4R-V,4R-I,' \
+                 'LCP-USB-V,LCP-USB-I,LCP-LSB-V,LCP-LSB-I,' \
+                 'RCP-USB-V,RCP-USB-I,RCP-LSB-V,RCP-LSB-I'
+        numpy.savetxt(filename, AD_data, fmt='%.5f', header=header, delimiter=',')
+
+        # Reconfigure SIS bias setting
+        # ----------------------------
+        if driver is None: self.driver.close_box()
+        if reconfigure is True: self.IV_recofigure()
+
+        # Data loading
+        # ------------
+        AD_data = numpy.loadtxt(filename, skiprows=1, delimiter=',')
+
+        # Plot part
+        # ---------
+        self.IV_ttlplot(AD_data=AD_data, initV=initV, finV=finV, datetime=datetime)
+
+        # Output information on terminal
+        # ------------------------------
+        print('\n'
+              ' ======== SIS IV Curve MEASUREMENT ========\n'
+              ' Time Stamp    : {}\n'
+              ' Start SISV    : {} [mV]\n'
+              ' Finish SISV   : {} [mV]\n'
+              ' Lo Attenuation: !!coming soon!! [mA]\n\n'.format(datetime, initV, finV))
+        return
+
     def input_value_check(self, initV, finV, interval):
-        if 0 <= initV and 0 < finV:
+        Vmix_limit = 30  # [mv]
+        if -Vmix_limit <= initV <= finV <= Vmix_limit:
             pass
         else:
-            raise ValueError('!!!Coming soon!!!')
+            msg = '{0}\n{1}\n{2}'.format('-- Input Invalid Value Error --',
+                                         '    !!! Invalid Voltage !!!',
+                                         'Available Voltage: -30 -- 30 [mV]')
+            raise ValueError(msg)
         repeat = int(abs(initV - finV) / interval)
         return repeat
 
-    def IVcurve_plot_options(self, ax, initV, finV):
+    def IV_plot_options(self, ax, initV, finV):
         [_ax.set_xticklabels('') for i, _ax in enumerate(ax) if i/2<1]
         [_ax.set_yticklabels('') for i, _ax in enumerate(ax) if i%2!=0]
         [_ax.set_xlabel('SIS V [mV]') for i, _ax in enumerate(ax) if i/2>=1]
@@ -31,14 +110,14 @@ class SIS_tune(object):
         [_ax.grid(color='gray', linestyle='--') for _ax in ax]
         return
 
-    def IVcurve_plot_divplot(self, AD_data, initV, finV, datetime):
+    def IV_divplot(self, AD_data, initV, finV, datetime):
         ## figure 1: Beam 1-2
         #### list-comprehension
         fig = matplotlib.pyplot.figure()
         ax = [fig.add_subplot(2, 2, i+1) for i in range(4)]
         labels = ['Beam1-LCP', 'Beam1-RCP', 'Beam2-LCP', 'Beam2-RCP']
         [_ax.plot(AD_data[:, 1+2*i], AD_data[:, 2+2*i], label=labels[i]) for i, _ax in enumerate(ax)]
-        self.IVcurve_plot_options(ax=ax, initV=initV, finV=finV)
+        self.IV_plot_options(ax=ax, initV=initV, finV=finV)
 
         fig.tight_layout()
         fig.subplots_adjust(top=0.9)
@@ -52,7 +131,7 @@ class SIS_tune(object):
         ax = [fig.add_subplot(2, 2, i+1) for i in range(4)]
         labels = ['Beam3-LCP', 'Beam3-RCP', 'Beam4-LCP', 'Beam4-RCP']
         [_ax.plot(AD_data[:, 9+2*i], AD_data[:, 10+2*i], label=labels[i]) for i, _ax in enumerate(ax)]
-        self.IVcurve_plot_options(ax=ax, initV=initV, finV=finV)
+        self.IV_plot_options(ax=ax, initV=initV, finV=finV)
 
         fig.tight_layout()
         fig.subplots_adjust(top=0.9)
@@ -66,7 +145,7 @@ class SIS_tune(object):
         ax = [fig.add_subplot(2, 2, i+1) for i in range(4)]
         labels = ['230GHz-LCP-USB', '230GHz-LCP-LSB', '230GHz-RCP-USB', '230GHz-RCP-LSB']
         [_ax.plot(AD_data[:, 17+2*i], AD_data[:, 18+2*i], label=labels[i]) for i, _ax in enumerate(ax)]
-        self.IVcurve_plot_options(ax=ax, initV=initV, finV=finV)
+        self.IV_plot_options(ax=ax, initV=initV, finV=finV)
 
         fig.tight_layout()
         fig.subplots_adjust(top=0.9)
@@ -76,7 +155,7 @@ class SIS_tune(object):
         fig.show()
         return
 
-    def IVcurve_plot_oneplot(self, AD_data, initV, finV, datetime):
+    def IV_ttlplot(self, AD_data, initV, finV, datetime):
         fig = matplotlib.pyplot.figure(figsize=(9, 7))
         ax = [fig.add_subplot(3, 4, i+1) for i in range(12)]
         labels = ['Beam1-LCP', 'Beam1-RCP', 'Beam2-LCP', 'Beam2-RCP',
@@ -100,157 +179,385 @@ class SIS_tune(object):
         fig.show()
         return
 
-    def IVcurve_meas_part(self, repeat, initV=0.0, interval=0.1):
-        # Opening procedure
-        self.mmix = Multi_Cryo.multi_mixer()
+    def IV_measure(self, repeat, initV=0.0, interval=0.1, onoff=[0]*12):
         AD_data = []
+        setV_list = [0] * 12
 
         # Measurement part
-        for i in range(repeat+1):
-            setV = initV + i * interval
-            setV_list = [setV] * 12
-            self.mmix.set_sisv(Vmix=setV_list)
-            time.sleep(0.5)
-            ret = self.mmix.monitor_sis()
-            ret.insert(0, setV)  # add setV to column 1
-            AD_data.append(ret[0:25])
-
-        # Closing procedure
-        self.mmix.close_box()
-        return
-
-    def IVcurve_meas_part_onoff(self, repeat, initV=0.0, interval=0.1, onoff=[0]*12):
-        # Opening procedure
-        self.mmix = Multi_Cryo.multi_mixer()
-        AD_data = []
-
-        # Measurement part
+        # ----------------
         for i in range(repeat+1):
             temp = []
+
+            # set bias --
             setV = initV + i * interval
-            setV_list = [0] * 12
             for j in range(12):
                 if onoff[j] == 1: setV_list[j] = setV
                 else: pass
-            self.mmix.set_sisv(Vmix=setV_list)
+            self.driver.set_sisv(Vmix=setV_list)
+
             time.sleep(0.2)
-            ret = self.mmix.monitor_sis()
+
+            # get data --
+            ret = self.driver.monitor_sis()
+
+            # data arrangement
+            # ----------------
             temp.append(setV)
+            # scaling -- TODO : 計算処理を後でまとめた方が効率がいい??
             for j in range(24):
                 if j % 2 == 0:
-                    temp.append(ret[j]*1e+1)
+                    temp.append(ret[j]*1e+1)  # AD[V] --> bias [mV]
                 elif j % 2 == 1:
-                    temp.append(ret[j]*1e+3)
+                    temp.append(ret[j]*1e+3)  # AD[V] --> current [uA]
             AD_data.append(temp)
-
-        # Closing procedure
-        self.mmix.close_box()
-
         return AD_data
 
-    def IVcurve_meas(self, initV=0.0, finV=6.0, interval=0.1, onoff=[1]*12, filefmt='csv'):
-        # input value check
+    def IV_recofigure(self):
+        # get params --
+        params = config_handler.Config_handler.load_sis_params(ret='array')
+        # set bias --
+        self.driver.set_sisv(Vmix=params[:, 0])
+        # self.box.set_Vd(voltage=params[:, 1])
+        # self.box.set_Vg1(voltage=params[:, 2])
+        # self.box.set_Vg2(voltage=params[:, 3])
+        self.driver.set_loatt(att=params[:, 4])
+        return
+
+
+class Trx_curve(object):
+    method = 'SIS Trx Measurement'
+    ver = '2017.11.09'
+    BE_num = 16
+    savedir = '/home/amigos/NASCORX_Measurement/SIStune/'
+
+    def __init__(self):
+        pass
+
+    def run(self, initV=0.0, finV=8.0, interval=0.1, driver=None, onoff='cnf', reconfigure=True,
+            integ=0.1, filefmt='csv'):
+
+        # Print Welcome massage
+        # ----------------------
+        print('\n\n'
+              ' =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n'
+              '   NASCO RX : SIS Tsys curve Measurement \n'
+              ' =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n'
+              ' ver - {}\n'
+              '\n\n'.format(self.ver))
+
+        # Input value check
+        # -----------------
         repeat = self.input_value_check(initV=initV, finV=finV, interval=interval)
 
-        # measurement
-        if 0 in onoff:
-            AD_data = self.IVcurve_meas_part_onoff(repeat, initV=initV, interval=interval, onoff=onoff)
-        elif 0 not in onoff:
-            AD_data = self.IVcurve_meas_part(repeat, initV=initV, interval=interval)
+        # Check available unit
+        # --------------------
+        if onoff == 'cnf':
+            onoff = config_handler.Config_handler.check_sis_state()
+        else:
+            onoff = [0]*12
+            pass
+
+        # Set Driver
+        # ----------
+        if driver is None: self.driver = Multi_Cryo.multi_box()
+        else: self.driver = driver
+        print('PCI board drivers are set.')
+
+        # == Main ========
+
+        # Measurement part
+        # ----------------
+        data = self.Trx_measure(repeat=repeat, initV=initV, interval=interval, onoff=onoff, integ=integ)
+        lo_att = self.driver.query_loatt()
+
+        # Calculate Y-factor and Tsys
+        # ---------------------------
+        data = self.Trx_calculate(data=data)
 
         # Data saving
-        datetime = time.strftime('%Y%m%d-%H%M')
-        filename = self.savedir + 'SISIV_{}.{}'.format(datetime, filefmt)
-        header = 'D/A-SISV,' \
-                 '1L-V,1L-I,1R-V,1R-I,2L-V,2L-I,2R-V,2R-I,' \
-                 '3L-V,3L-I,3R-V,3R-I,4L-V,4L-I,4R-V,4R-I,' \
-                 'LCP-USB-V,LCP-USB-I,LCP-LSB-V,LCP-LSB-I,' \
-                 'RCP-USB-V,RCP-USB-I,RCP-LSB-V,RCP-LSB-I'
-        numpy.savetxt(filename, AD_data, fmt='%.5f', header=header, delimiter=',')
+        # -----------
+        datetime = time.strftime('%Y%m%d-%H%M%S')
+        filename = self.savedir + 'SIS_Tsys_curve_{}.{}'.format(datetime, filefmt)
+        header = 'D/A-V,' \
+                 '{0}-V,{0}-I,{1}-V,{1}-I,{2}-V,{2}-I,{3}-V,{3}-I,{4}-V,{4}-I,{5}-V,{5}-I,' \
+                 '{6}-V,{6}-I,{7}-V,{7}-I,{8}-V,{8}-I,{9}-V,{9}-I,{10}-V,{10}-I,{11}-V,{11}-I,' \
+                 'Phot1,Phot2,Phot3,Phot4,Phot5,Phot6,Phot7,Phot8,' \
+                 'Phot9,Phot10,Phot11,Phot12,Phot13,Phot14,Phot15,Phot16' \
+                 '{0}-V,{0}-I,{1}-V,{1}-I,{2}-V,{2}-I,{3}-V,{3}-I,{4}-V,{4}-I,{5}-V,{5}-I,' \
+                 '{6}-V,{6}-I,{7}-V,{7}-I,{8}-V,{8}-I,{9}-V,{9}-I,{10}-V,{10}-I,{11}-V,{11}-I,' \
+                 'Psky1,Psky2,Psky3,Psky4,Psky5,Psky6,Psky7,Psky8,' \
+                 'Psky9,Psky10,Psky11,Psky12,Psky13,Psky14,Psky15,Psky16' \
+                 'Yfac1,Yfac2,Yfac3,Yfac4,Yfac5,Yfac6,Yfac7,Yfac8,' \
+                 'Yfac9,Yfac10,Yfac11,Yfac12,Yfac13,Yfac14,Yfac15,Yfac16,' \
+                 'Tsys1,Tsys2,Tsys3,Tsys4,Tsys5,Tsys6,Tsys7,Tsys8,' \
+                 'Tsys9,Tsys10,Tsys11,Tsys12,Tsys13,Tsys14,Tsys15,Tsys16'
+        numpy.savetxt(filename, data, fmt='%.5f', header=header, delimiter=',')
+
+        # Reconfigure SIS bias setting
+        # ----------------------------
+        #TODO --> test
+        if driver is None: self.driver.close_box()
+        if reconfigure is True: self.Trx_recofigure()
 
         # Data loading
-        AD_data = numpy.loadtxt(filename, skiprows=1, delimiter=',')
+        # ------------
+        data = numpy.loadtxt(filename, skiprows=1, delimiter=',')
 
-        # Plot part
-        self.IVcurve_plot_oneplot(AD_data=AD_data, initV=initV, finV=finV, datetime=datetime)
-
-        # Output on terminal
-        print('\n'
-        '======== SIS IV Curve MEASUREMENT ========\n'
-        'Time Stamp    : {}\n'
-        'Start SISV    : {} [mV]\n'
-        'Finish SISV   : {} [mV]\n'
-        'Lo Attenuation: !!coming soon!! [mA]\n'.format(datetime, initV, finV))
 
         return
 
-    def Trx_meas(self, initV=0.0, finV=6.0, interval=0.1, filefmt='csv'):
+    def Trx_measure(self, repeat, initV=0.0, interval=0.1, onoff=[0]*12, integ=0.1):
+        data = []
+
+        # HOT measurement
+        # ---------------
+        # TODO : HOT IN
+        data_hot = self.Trx_sweep_sisv(repeat, initV=initV, interval=interval, onoff=onoff, integ=integ)
+
+        # SKY measurement
+        # ---------------
+        # TODO : HOT OUT, OBS SKY
+        data_sky = self.Trx_sweep_sisv(repeat, initV=initV, interval=interval, onoff=onoff, integ=integ)
+
+        # data arrangement
+        # ----------------
+        data.append(data_hot)
+        data.append(data_sky)
+        ret = numpy.array(data)
+        return ret
+
+    def Trx_sweep_sisv(self, repeat, initV=0.0, interval=0.1, onoff=[0]*12, integ=0.1):
+        data = []
+        setV_list = [0] * 12
+
+        for i in range(repeat+1):
+            temp = []
+
+            # set bias
+            # --------
+            setV = initV + i * interval
+            for j in range(12):
+                if onoff[j] == 1: setV_list[j] = setV
+                else: pass
+            self.driver.set_sisv(Vmix=setV_list)
+
+            time.sleep(0.1)
+
+            # get data
+            # --------
+            # spec = self.client.oneshot(integtime=integ, repeat=1, start=None)
+            spec = self.dfs.oneshot(1, integ, 0)    # TODO : DFS controller
+            ad = self.driver.monitor_sis()
+
+            # data arrangement
+            # ----------------
+            temp.append(setV)
+            # AD data scaling --
+            for j in range(24):
+                if j % 2 == 0:
+                    temp.append(ad[j]*1e+1)         # AD[V] --> bias [mV]
+                elif j % 2 == 1:
+                    temp.append(ad[j]*1e+3)         # AD[V] --> current [uA]
+            # spectrum analysis --
+            power = numpy.sum(spec, axis=1)
+            temp.append(power)
+            data.append(temp)
+        return data
+
+    def Trx_calculate(self, data, Tamb=300):
+        # dB scale Y-factor
+        # -----------------
+        Yfac = [10*numpy.log10(data[25+i]/data[65+i]) for i in range(16)]
+
+        # Tsys calculation
+        # ----------------
+        Tsys = [(Tamb*data[65+i]) / (data[25+i]-data[65+i]) for i in range(16)]
+
+        # append data
+        # -----------
+        data = numpy.concatenate((data, Yfac), axis=0)
+        data = numpy.concatenate((data, Tsys), axis=0)
+        return data
+
+    def Trx_plot_oneplot(self, AD_data, initV, finV, datetime):
+        fig = matplotlib.pyplot.figure(figsize=(9, 7))
+        ax = [fig.add_subplot(3, 4, i+1) for i in range(12)]
+        axtw = [_ax.twinx() for _ax in ax]
+        labels = ['Beam1-LCP', 'Beam1-RCP', 'Beam2-LCP', 'Beam2-RCP',
+                  'Beam3-LCP', 'Beam3-RCP', 'Beam4-LCP', 'Beam4-RCP',
+                  '230GHz-LCP-USB', '230GHz-LCP-LSB', '230GHz-RCP-USB', '230GHz-RCP-LSB']
+        # For first plot
+        ax[1].plot(AD_data[:, ], AD_data[:, ], label='HOT', color='Red')
+        ax[1].plot(AD_data[:, ], AD_data[:, ], label='COLD', color='Blue')
+        axtw[1].plot(AD_data[:, ], AD_data[:, ], label='Trx', color='Green')
+        # HOT plot
+        [_ax.plot(AD_data[:, 1+2*i], AD_data[:, 2+2*i], label=labels[i], color='Red')
+         for i, _ax in enumerate(ax) if i>=2]
+        # COLD plot
+        [_ax.plot(AD_data[:, 1+2*i], AD_data[:, 2+2*i], label=labels[i], color='Blue')
+         for i, _ax in enumerate(ax) if i>=2]
+        # Trx plot
+        [_ax.plot(AD_data[:, 1+2*i], AD_data[:, 2+2*i], label=labels[i], color='Green')
+         for i, _ax in enumerate(axtw) if i>=2]
+        # Options
+        [_ax.set_xlim([initV, finV]) for _ax in ax]
+        [_ax.set_ylim([-10, 500]) for _ax in ax]
+        [_ax.set_xticklabels('') for i, _ax in enumerate(ax) if i/4<2]
+        [_ax.set_yticklabels('') for i, _ax in enumerate(ax) if i%4!=0]
+        [_ax.set_xlabel('Lo Attenuation [mA]') for i, _ax in enumerate(ax) if i/4>=2]
+        [_ax.set_ylabel('Power [dBm]') for i, _ax in enumerate(ax) if i%4==0]
+        [_ax.legend(loc='upper left', prop={'size': 7}, numpoints=1) for _ax in ax]
+        [_ax.grid(color='gray', linestyle='--') for _ax in ax]
+
+        fig.tight_layout()
+        fig.subplots_adjust(top=0.9)
+        fig.suptitle('SIS IV Curve Measurement: {}'.format(datetime), fontsize=15)
+        figname = self.savedir + 'SIS-IVcurve_{}.png'.format(datetime)
+        fig.savefig(figname)
+        fig.show()
+        return
+
+    def input_value_check(self, initV, finV, interval):
+        Vmix_limit = 30  # [mv]
+        if -Vmix_limit <= initV <= finV <= Vmix_limit:
+            pass
+        else:
+            msg = '{0}\n{1}\n{2}'.format('-- Input Invalid Value Error --',
+                                         '    !!! Invalid Voltage !!!',
+                                         'Available Voltage: -30 -- 30 [mV]')
+            raise ValueError(msg)
+        repeat = int(abs(initV - finV) / interval)
+        return repeat
+
+    def Trx_recofigure(self):
+        # get params --
+        params = config_handler.Config_handler.load_sis_params(ret='array')
+        # set bias --
+        self.driver.set_sisv(Vmix=params[:, 0])
+        # self.box.set_Vd(voltage=params[:, 1])
+        # self.box.set_Vg1(voltage=params[:, 2])
+        # self.box.set_Vg2(voltage=params[:, 3])
+        self.driver.set_loatt(att=params[:, 4])
+        return
+
+
+class Swp_Lo_Measure(object):
+    method = 'Sweep Lo Measurement'
+    ver = '2017.10.05'
+    savedir = '/home/amigos/NASCORX_Measurement/SIStune/'
+
+    def __init__(self):
+        pass
+
+    def swpLo_meas(self, initI=0.0, finI=2.0, interval=0.05, onoff=[1]*10):
+        # Initialization Section
+        # ======================
+
+        # Print Welcome massage
+        # ----------------------
+        print('\n\n'
+              '=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-'
+              'NASCO RX : Lo Sweep Measurement'
+              '=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-'
+              'ver{}'
+              '\n\n'.format(self.ver))
+
         # input value check
-        repeat = self.input_value_check(initV=initV, finV=finV, interval=interval)
+        # -----------------
+        if 0 <= initI <= finI <= 100:
+            pass
+        else:
+            raise ValueError('!!!Coming soon!!!')
+        repeat = int(abs(initI - finI) / interval)
+
+
+        # Operation Section
+        # =================
 
         # Opening procedure
-        self.mmix = Multi_Cryo.multi_mixer()
+        # -----------------
+        self.box = Multi_Cryo.multi_box()
+        print('Open Devices'
+              '============')
         AD_data = []
 
         # Measurement part
-        ## HOT Measurement
-        # insert HOT method
+        # ----------------
+
+        # 1. HOT Measurement
+        # move.hot functions
         for i in range(repeat+1):
-            setV = initV + i * interval
-            setV_list = [setV] * 12
-            self.mmix.set_sisv(voltage=setV_list)
-            time.sleep(0.5)
-            # get spectrum (or total power from XFFTS)
-            # get_power_method
-            ret = self.mmix.monitor_sis()
-            ret.insert(0, setV)
-            AD_data.append(ret[0:25])
+            temp = []
+            setI = initI + i * interval
+            setI_list = [0] * 10
+            for j in range(10):
+                if onoff[i] == 1: setI_list[j] = setI
+                else: pass
+            self.box.set_loatt(att=setI_list)
+            time.sleep(0.2)
+            # get IF power function
 
-        ## SKY Measurement
-        # obs sky method
+
+        # 2. COLD Measurement
         for i in range(repeat+1):
-            setV = initV + i * interval
-            setV_list = [setV] * 12
-            self.mmix.set_sisv(voltage=setV_list)
-            time.sleep(0.5)
-            # get spectrum (or total power from XFFTS)
-            # get_power_method
-            ret = self.mmix.monitor_sis()
-            ret.insert(0, setV)
-            AD_data.append(ret[0:25])
+            temp = []
+            setI = initI + i * interval
+            setI_list = [0] * 10
+            for j in range(10):
+                if onoff[i] == 1: setI_list[j] = setI
+                else: pass
+            self.box.set_loatt(att=setI_list)
+            time.sleep(0.2)
+            # get IF power function
 
-        # Closing procedure
-        self.mmix.close_box()
+    def Swp_Lo_plot_oneplot(self, AD_data, initI, finI, datetime):
+        fig = matplotlib.pyplot.figure(figsize=(9, 7))
+        ax = [fig.add_subplot(3, 4, i+1) for i in range(12)]
+        axtw = [_ax.twinx() for _ax in ax]
+        labels = ['Beam1-LCP', 'Beam1-RCP', 'Beam2-LCP', 'Beam2-RCP',
+                  'Beam3-LCP', 'Beam3-RCP', 'Beam4-LCP', 'Beam4-RCP',
+                  '230GHz-LCP-USB', '230GHz-LCP-LSB', '230GHz-RCP-USB', '230GHz-RCP-LSB']
+        # For first plot
+        ax[1].plot(AD_data[:, ], AD_data[:, ], label='HOT', color='Red')
+        ax[1].plot(AD_data[:, ], AD_data[:, ], label='COLD', color='Blue')
+        axtw[1].plot(AD_data[:, ], AD_data[:, ], label='Trx', color='Green')
+        # HOT plot
+        [_ax.plot(AD_data[:, 1+2*i], AD_data[:, 2+2*i], label=labels[i], color='Red')
+         for i, _ax in enumerate(ax) if i>=2]
+        # COLD plot
+        [_ax.plot(AD_data[:, 1+2*i], AD_data[:, 2+2*i], label=labels[i], color='Blue')
+         for i, _ax in enumerate(ax) if i>=2]
+        # Trx plot
+        [_ax.plot(AD_data[:, 1+2*i], AD_data[:, 2+2*i], label=labels[i], color='Green')
+         for i, _ax in enumerate(axtw) if i>=2]
+        # Options
+        [_ax.set_xlim([initI, finI]) for _ax in ax]
+        [_ax.set_ylim([-10, 500]) for _ax in ax]
+        [_ax.set_xticklabels('') for i, _ax in enumerate(ax) if i/4<2]
+        [_ax.set_yticklabels('') for i, _ax in enumerate(ax) if i%4!=0]
+        [_ax.set_xlabel('Lo Attenuation [mA]') for i, _ax in enumerate(ax) if i/4>=2]
+        [_ax.set_ylabel('Power [dBm]') for i, _ax in enumerate(ax) if i%4==0]
+        [_ax.legend(loc='upper left', prop={'size': 7}, numpoints=1) for _ax in ax]
+        [_ax.grid(color='gray', linestyle='--') for _ax in ax]
 
-        # Calculate Y-factor and Trx
-
-
-        # Saving data
-        datetime = time.strftime('%Y%m%d-%H%M%S')
-        filename = self.savedir + 'SISIV_{}.{}'.format(datetime, filefmt)
-        header = 'D/A-SISV' \
-                 '1L-V,1L-I,1L-PHOT,1L-Pcold,1L-Trx,1R-V,1R-I,1R-PHOT,1R-Pcold,1R-Trx,' \
-                 '2L-V,2L-I,2L-PHOT,2L-Pcold,2L-Trx,2R-V,2R-I,2R-PHOT,2R-Pcold,2R-Trx,' \
-                 '3L-V,3L-I,3L-PHOT,3L-Pcold,3L-Trx,3R-V,3R-I,3R-PHOT,3R-Pcold,3R-Trx,' \
-                 '4L-V,4L-I,4L-PHOT,4L-Pcold,4L-Trx,2R-V,4R-I,4R-PHOT,4R-Pcold,4R-Trx,' \
-                 'LCP-USB-V,LCP-USB-I,LCP-USB-PHOT,LCP-USB-Pcold,LCP-USB-Trx,' \
-                 'LCP-LSB-V,LCP-LSB-I,LCP-LSB-PHOT,LCP-LSB-Pcold,LCP-LSB-Trx,' \
-                 'RCP-USB-V,RCP-USB-I,RCP-USB-PHOT,RCP-USB-Pcold,RCP-USB-Trx,' \
-                 'RCP-LSB-V,RCP-LSB-I,RCP-LSB-PHOT,RCP-LSB-Pcold,RCP-LSB-Trx'
-        numpy.savetxt(filename, fmt='%.5f', header=header)
-
-
+        fig.tight_layout()
+        fig.subplots_adjust(top=0.9)
+        fig.suptitle('SIS IV Curve Measurement: {}'.format(datetime), fontsize=15)
+        figname = self.savedir + 'SIS-IVcurve_{}.png'.format(datetime)
+        fig.savefig(figname)
+        fig.show()
         return
 
-    def Trx_fine_meas(self, V):
-        return
+"""
+class SIS_tune(object):
+    method = 'SIS Tuning Handler'
+    ver = '2017.10.05'
+    savedir = '/home/amigos/NASCORX_Measurement/SIStune/'
 
-    def SIS_tune(self):
-        return
-
-    # ++++++++++++++++
-    # Sub functions
-    # ++++++++++++++++
+    def __init__(self):
+        self.IV_handler = IV_curve()
+        self.Trx_handler = Trx_Measure()
+        self.Lo_handler = Swp_Lo_Measure()
 
     def get_allan_data(self, box, repeat=1000, interval=0.5):
         # Opening procedure
@@ -264,3 +571,23 @@ class SIS_tune(object):
             AD_data.append(ret[0:26])
             time.sleep(interval)
         return AD_data
+
+
+class SIS_tuner(object):
+    method = 'SIS_controller'
+    ver = '2017.10.08'
+
+    def __init__(self):
+        self.iv_meas = IV_curve()
+        self.trx_meas = Trx_Measure()
+        self.swplo_meas = Swp_Lo_Measure()
+        self.sis_tune = SIS_tune()
+        pass
+
+    def tst(self):
+        return
+"""
+
+# History
+# -------
+# written by T.Inaba

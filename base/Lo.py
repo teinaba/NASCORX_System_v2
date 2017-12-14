@@ -5,9 +5,9 @@
 #import modules
 import time
 import pymeasure
-import NASCORX_System.device.E8257D as E8257D
-import NASCORX_System.device.MG3692C as MG3692C
-import NASCORX_System.device.FSW_0020 as FSW_0020
+from ..device import E8257D
+from ..device import MG3692C
+from ..device import FSW_0020
 
 
 class firstlo(object):

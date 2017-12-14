@@ -3,9 +3,9 @@
 
 
 # import modules
-import NASCORX_System.device.CPZ3177 as CPZ3177
-import NASCORX_System.device.CPZ340516 as CPZ340516
-import NASCORX_System.device.CPZ340816 as CPZ340816
+from ..device import CPZ3177
+from ..device import CPZ340516
+from ..device import CPZ340816
 
 
 class mixer(object):

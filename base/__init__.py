@@ -1,5 +1,5 @@
 #! /usr/bin/env python
 
-import NASCORX_System.base.Multi_Cryo
-import NASCORX_System.base.Multi_Lo
-import NASCORX_System.base.Multi_IF
+from . import Multi_Cryo
+from . import Multi_Lo
+from . import Multi_IF

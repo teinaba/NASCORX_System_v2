@@ -1,15 +1,15 @@
 #! /usr/bin/env python
 
-import NASCORX_System.device.A11713A
-import NASCORX_System.device.A11713C
-import NASCORX_System.device.CPZ3177
-import NASCORX_System.device.CPZ340516
-import NASCORX_System.device.CPZ340816
-import NASCORX_System.device.CPZ7204
-import NASCORX_System.device.E8257D
-import NASCORX_System.device.FSW_0020
-import NASCORX_System.device.L218
-import NASCORX_System.device.MG3692C
-import NASCORX_System.device.ML2437A
-import NASCORX_System.device.TR71W
-import NASCORX_System.device.TR72W
+from . import A11713A
+from . import A11713C
+from . import CPZ3177 as cPZ3177
+from . import CPZ340516 as CPZ340516
+from . import CPZ340816 as CPZ340816
+from . import CPZ7204 as CPZ7207
+from . import E8257D
+from . import FSW_0020
+from . import L218
+from . import MG3692C
+from . import ML2437A
+from . import TR71W
+from . import TR72W

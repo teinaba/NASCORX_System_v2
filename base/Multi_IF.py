@@ -3,8 +3,8 @@
 
 
 # import modules
-import NASCORX_System.device.A11713B as A11713B
-import NASCORX_System.device.A11713C as A11713C
+from ..device import A11713B
+from ..device import A11713C
 
 
 class prog_att(object):
