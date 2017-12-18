@@ -5,4 +5,3 @@
 from . import SIS_tune
 from . import if_controller
 from . import HEMT_multi_test
-from . import config_handler

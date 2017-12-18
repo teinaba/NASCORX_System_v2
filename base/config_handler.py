@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 # import modules
-import time
 import numpy
 import configparser
 
@@ -28,13 +27,40 @@ class Config_handler(object):
         sysfname = mastercnf['Configuration']['SYS-config']
         self.sis_conf = self.cnfdir + sisfname                                            # sis config
         self.sys_conf = self.cnfdir + sysfname                                            # system config
+        self.device_table = self.dirpath + 'device_table.cnf'                             # device table
         pass
 
-    def load_sis_params(self, ret='dict'):
-        # Set config file
-        # ---------------
+    def read(self, file):
+        # Set config file --
         config = configparser.ConfigParser()
-        config.read(self.sis_conf)
+        config.read(file)
+        return config
+
+    def load_ip(self, device):
+        config = self.read(self.device_table)
+        ip = str(config[device]['ip'])
+        return ip
+
+    def load_ip_port(self, device):
+        config = self.read(self.device_table)
+        ip = str(config[device]['ip'])
+        port = int(config[device]['port'])
+        return ip, port
+
+    def load_ip_port_connection(self, device):
+        config = self.read(self.device_table)
+        ip = str(config[device]['ip'])
+        port = int(config[device]['port'])
+        connection = str(config[device]['connection'])
+        return ip, port, connection
+
+    def load_ndev(self, device):
+        config = self.read(self.device_table)
+        ndev = str(config[device]['ndev'])
+        return ndev
+
+    def load_sis_params(self, ret='dict'):
+        config = self.read(self.sis_conf)
         sections = config.sections()
         unitlist = [_sec for _sec in sections if 'beam' in _sec]
 
@@ -72,10 +98,7 @@ class Config_handler(object):
         return numpy.array(params_list)
 
     def check_sis_state(self):
-        # Set config file
-        # ---------------
-        config = configparser.ConfigParser()
-        config.read(self.sis_conf)
+        config = self.read(self.sis_conf)
         sections = config.sections()
         unitlist = [_sec for _sec in sections if 'beam' in _sec]
 
@@ -91,10 +114,7 @@ class Config_handler(object):
         return state_list
 
     def write_sis_state(self, state_list):
-        # Set config file
-        # ---------------
-        config = configparser.ConfigParser()
-        config.read(self.sis_conf)
+        config = self.read(self.sis_conf)
         sections = config.sections()
         unitlist = [_sec for _sec in sections if 'beam' in _sec]
 
@@ -113,10 +133,7 @@ class Config_handler(object):
         return
 
     def load_if_config(self, ret='dict'):
-        # Set config file
-        # ---------------
-        config = configparser.ConfigParser()
-        config.read(self.sis_conf)
+        config = self.read(self.sis_conf)
         params_list = []
         params_dict = {}
 
@@ -130,10 +147,7 @@ class Config_handler(object):
         else: return params_dict
 
     def write_if_config(self, att_list):
-        # Set config file
-        # ---------------
-        config = configparser.ConfigParser()
-        config.read(self.sis_conf)
+        config = self.read(self.sis_conf)
         keys = config.options('IF_PATT')
 
         # Set attenuation
@@ -155,3 +169,4 @@ class Config_handler(object):
 # History
 # -------
 # written by T.Inaba
+# 2017/12/14 T.Inaba: create device table method. add read method.

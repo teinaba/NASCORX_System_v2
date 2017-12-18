@@ -3,8 +3,9 @@
 # import modules
 import csv
 import time
+
 from ..base import Multi_IF
-from ..bin import config_handler
+from ..base import config_handler
 
 
 class IF_controller(Multi_IF.multi_IF):
