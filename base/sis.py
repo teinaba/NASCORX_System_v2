@@ -231,8 +231,8 @@ class hemt(object):
         self.nhemtda = self.config.load_ndev(device=self.hemtda)
         self.nhemtad = self.config.load_ndev(device=self.hemtad)
         # set board control module --
-        self.da = CPZ340816.cpz340816(dev=self.nhemtda[1])
-        self.ad = CPZ3177.cpz3177(dev=self.nhemtad[1])
+        self.da = CPZ340816.cpz340816(dev=self.nhemtda)
+        self.ad = CPZ3177.cpz3177(dev=self.nhemtad)
         #  settings --
         self.ad.set_mode(mode='single')
         self.ad.set_input_range(Vrange='AD_10V')
@@ -376,9 +376,9 @@ class box(object):
         self.nloda = config.load_ndev(device=self.loda)
         self.nboxad = config.load_ndev(device=self.boxad)
         # import board control module --
-        self.davc = CPZ340816.cpz340816(dev=self.nboxda[1])
-        self.dacc = CPZ340516.cpz340516(dev=self.nloda[1])
-        self.ad = CPZ3177.cpz3177(dev=self.nboxad[1])
+        self.davc = CPZ340816.cpz340816(dev=self.nboxda)
+        self.dacc = CPZ340516.cpz340516(dev=self.nloda)
+        self.ad = CPZ3177.cpz3177(dev=self.nboxad)
         # settings --
         self.dacc.set_Irange(mode='DA_0_100mA')
         self.ad.set_mode(mode='diff')
@@ -750,11 +750,11 @@ class multi_mixer(object):
         self.nloda2 = config.load_ndev(device=self.loda2)
         self.nsisad = config.load_ndev(device=self.sisad)
         # import board control module
-        self.davc1 = CPZ340816.cpz340816(dev=self.nsisda1[1])  # vc = voltage control ??
-        self.davc2 = CPZ340816.cpz340816(dev=self.nsisda2[1])
-        self.davc3 = CPZ340816.cpz340816(dev=self.nsisda3[1])
-        self.dacc1 = CPZ340516.cpz340516(dev=self.nloda1[1])  # cc = current control ??
-        self.dacc2 = CPZ340516.cpz340516(dev=self.nloda2[1])
+        self.davc1 = CPZ340816.cpz340816(dev=self.nsisda1)
+        self.davc2 = CPZ340816.cpz340816(dev=self.nsisda2)
+        self.davc3 = CPZ340816.cpz340816(dev=self.nsisda3)
+        self.dacc1 = CPZ340516.cpz340516(dev=self.nloda1)
+        self.dacc2 = CPZ340516.cpz340516(dev=self.nloda2)
         self.ad = CPZ3177.cpz3177(dev=self.nsisad[1])
         # settings
         self.dacc1.set_Irange(mode='DA_0_100mA')
@@ -980,8 +980,8 @@ class multi_hemt(object):
         self.nhemtda2 = config.load_ndev(device=self.hemtda2)
         self.nhemtad = config.load_ndev(device=self.hemtad)
         # import board control module
-        self.da1 = CPZ340816.cpz340816(dev=self.nhemtda1[1])
-        self.da2 = CPZ340816.cpz340816(dev=self.nhemtda2[1])
+        self.da1 = CPZ340816.cpz340816(dev=self.nhemtda1)
+        self.da2 = CPZ340816.cpz340816(dev=self.nhemtda2)
         self.ad = CPZ3177.cpz3177(dev=self.nhemtad[1])
         # settings
         self.ad.set_mode(mode='single')
@@ -1185,13 +1185,13 @@ class multi_box(object):
         self.nboxad1 = config.load_ndev(device=self.boxad1)
         self.nboxad2 = config.load_ndev(device=self.boxad2)
         # import board control module --
-        self.davc1 = CPZ340816.cpz340816(dev=self.nboxda1[1])  # vc = voltage control ??
-        self.davc2 = CPZ340816.cpz340816(dev=self.nboxda2[1])
-        self.davc3 = CPZ340816.cpz340816(dev=self.nboxda3[1])
-        self.dacc1 = CPZ340516.cpz340516(dev=self.nloda1[1])  # cc = current control ??
-        self.dacc2 = CPZ340516.cpz340516(dev=self.nloda2[1])
-        self.ad1 = CPZ3177.cpz3177(dev=self.nboxad1[1])
-        self.ad2 = CPZ3177.cpz3177(dev=self.nboxad2[1])
+        self.davc1 = CPZ340816.cpz340816(dev=self.nboxda1)
+        self.davc2 = CPZ340816.cpz340816(dev=self.nboxda2)
+        self.davc3 = CPZ340816.cpz340816(dev=self.nboxda3)
+        self.dacc1 = CPZ340516.cpz340516(dev=self.nloda1)
+        self.dacc2 = CPZ340516.cpz340516(dev=self.nloda2)
+        self.ad1 = CPZ3177.cpz3177(dev=self.nboxad1)
+        self.ad2 = CPZ3177.cpz3177(dev=self.nboxad2)
         # settings --
         self.dacc1.set_Irange(mode='DA_0_100mA')
         self.dacc2.set_Irange(mode='DA_0_100mA')
