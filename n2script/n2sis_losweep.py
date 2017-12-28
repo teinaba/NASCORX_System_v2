@@ -18,8 +18,8 @@ class Losweep(object):
     driver = None
 
     # parameters --
-    initI = - 8.0
-    finI = 8.0
+    initi = - 8.0  # initial current
+    fini = 8.0     # finish current
     interval = 0.1
     sisv = 0.0
 
@@ -32,7 +32,7 @@ class Losweep(object):
         while True:
             if self.switch:
                 time.sleep(0.1)
-                self.run(self.initI, self.finI, self.interval, self.sisv)
+                self.run(self.initi, self.fini, self.interval, self.sisv)
                 self.switch = False
             else:
                 pass
@@ -41,13 +41,13 @@ class Losweep(object):
 
     def subscriber(self, req):
         self.switch = req.switch
-        self.initI = req.initI
-        self.finI = req.finI
+        self.initi = req.initi
+        self.fini = req.fini
         self.interval = req.interval
         self.sisv = req.sisv
         return
 
-    def run(self, initI=0.0, finI=2.0, interval=0.05, sisv=0, integ=0.1):
+    def run(self, initi=0.0, fini=2.0, interval=0.05, sisv=0.0, integ=0.1):
 
         # Print Welcome massage
         # ----------------------
@@ -60,7 +60,7 @@ class Losweep(object):
 
         # input value check
         # -----------------
-        repeat = self.input_value_check(initI=initI, finI=finI, interval=interval)
+        repeat = self.input_value_check(initi=initi, fini=fini, interval=interval)
 
         # Set Driver
         # ----------
@@ -73,7 +73,7 @@ class Losweep(object):
 
         # Measurement part
         # ----------------
-        result = self.measure(repeat=repeat, initI=initI, interval=interval, integ=integ)
+        result = self.measure(repeat=repeat, initi=initi, interval=interval, integ=integ)
 
         # Calculate Y-Factor and Tsys
         # ---------------------------
@@ -96,31 +96,31 @@ class Losweep(object):
 
         # Plot part
         # ---------
-        self.ttlplot(data=data, initI=initI, finI=finI, datetime=datetime, sisv=sisv)
+        self.ttlplot(data=data, initi=initi, fini=fini, datetime=datetime, sisv=sisv)
         return
 
 
-    def input_value_check(self, initI=2.0, finI=5.0, interval=0.05):
-        if 0 <= initI <= finI <= 100:
+    def input_value_check(self, initi=2.0, fini=5.0, interval=0.05):
+        if 0 <= initi <= fini <= 100:
             pass
         else:
             msg = '{0}\n{1}\n{2}'.format('-- Input Invalid Value Error --',
                                          '    !!! Invalid Current !!!',
                                          'Available Voltage: 0 -- 100 [mA]')
             raise ValueError(msg)
-        repeat = int(abs(initI - finI) / interval)
+        repeat = int(abs(initi - fini) / interval)
         return repeat
 
-    def measure(self, repeat, initI=2.0, interval=0.05, integ=0.1):
+    def measure(self, repeat, initi=2.0, interval=0.05, integ=0.1):
         # HOT measurement
         # ---------------
         # TODO : HOT IN
-        data_hot = self.sweep_lo(repeat, initI=initI, interval=interval, integ=integ, col0=True, pow=3000)
+        data_hot = self.sweep_lo(repeat, initi=initi, interval=interval, integ=integ, col0=True, pow=3000)
 
         # COLD measurement
         # ----------------
         # TODO : HOT OUT, OBS SKY
-        data_sky = self.sweep_lo(repeat, initI=initI, interval=interval, integ=integ, col0=False, pow=1500)
+        data_sky = self.sweep_lo(repeat, initi=initi, interval=interval, integ=integ, col0=False, pow=1500)
 
         # data arrangement
         # ----------------
@@ -129,12 +129,12 @@ class Losweep(object):
         ret = numpy.concatenate((hot_arr, sky_arr), axis=1)
         return ret
 
-    def sweep_lo(self, repeat, initI=2.0, interval=0.05, integ=0.1, col0=True, pow=10):
+    def sweep_lo(self, repeat, initi=2.0, interval=0.05, integ=0.1, col0=True, pow=10):
         result = []
 
         for i in range(repeat+1):
             temp = []
-            setI = initI + i * interval
+            setI = initi + i * interval
 
             # bias set
             # --------
@@ -174,7 +174,7 @@ class Losweep(object):
         result = [numpy.append(result[i], t) for i, t in enumerate(Tsys2)]
         return result
 
-    def ttlplot(self, data, initI, finI, sisv, datetime):
+    def ttlplot(self, data, initi, fini, sisv, datetime):
         fig = matplotlib.pyplot.figure()
         fig.subplots_adjust(right=0.75)
 
@@ -213,7 +213,7 @@ class Losweep(object):
         if 200 <= max(sisi): Imax = 200
         else: Imax = max(sisi) + 20
 
-        ax1.set_xlim(initI, finI)
+        ax1.set_xlim(initi, fini)
         ax1.set_ylim(50, 400)
         t_ax.set_ylim(Imin, Imax)
         p_ax.set_ylim(0, 20000)  # TODO
@@ -240,8 +240,14 @@ class Losweep(object):
 
 
 if __name__ == '__main__':
+    import rospy
+    from NASCORX.msg import sislosweep_msg
+
+    rospy.init_node('sis-losweep')
+    rospy.loginfo('ROS_sis-vlosweep Start')
     lo = Losweep()
-    lo.run(initI=0, finI=2)
+    rospy.Subscriber("sis-losweep", sislosweep_msg, lo.subscriber)
+    rospy.spin()
 
 
 # History

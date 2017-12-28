@@ -52,7 +52,7 @@ class Vsweep(object):
         self.lo = req.lo
         return
 
-    def run(self, initv=0.0, finv=6.0, interval=0.1, lo=0, integ=0.1, fmt='csv'):
+    def run(self, initv=0.0, finv=6.0, interval=0.1, lo=0, integ=0.1):
 
         # Print Welcome massage
         # ---------------------
@@ -87,7 +87,7 @@ class Vsweep(object):
         # Data saving part
         # ----------------
         datetime = time.strftime('%Y%m%d-%H%M')
-        filepath = os.path.join(self.savedir, 'n2sis_vsweep_lo{}mA_{}.{}'.format(lo, datetime, fmt))
+        filepath = os.path.join(self.savedir, 'n2sis_vsweep_lo{}mA_{}.csv'.format(lo, datetime))
         header = 'DA-V,Vhot,Ihot,Phot1,Phot2,Vcold,Icold,Pcold1,Pcold2,Yfac1,Yfac2,Tsys1,Tsys2'
         numpy.savetxt(filepath, result, fmt='%.5f', header=header, delimiter=',')
 
@@ -251,7 +251,7 @@ if __name__ == '__main__':
     rospy.init_node('sis-vsweep')
     rospy.loginfo('ROS_sis-vsweep Start')
     vs = Vsweep()
-    rospy.Subscriber("sis-iv", sisvsweep_msg, vs.subscriber)
+    rospy.Subscriber("sis-vsweep", sisvsweep_msg, vs.subscriber)
     rospy.spin()
 
 
