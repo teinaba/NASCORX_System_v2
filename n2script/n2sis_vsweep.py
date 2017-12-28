@@ -2,9 +2,10 @@
 
 # import modules
 # --------------
+import os
 import time
-
 import numpy
+import threading
 import matplotlib.pyplot
 
 #import equipment_nanten
@@ -13,21 +14,50 @@ from NASCORX_System.base import sis
 
 class Vsweep(object):
     method = 'Trx V sweep Measurement'
-    ver = '2017.12.18'
-    savedir = '/home/amigos/NASCORX_Measurement/SIStune/'
+    ver = '2017.12.28'
+    savedir = '/home/necst/data/experiment/rx'
+    switch = False
+    driver = None
+
+    # parameters --
+    initv = - 8.0
+    finv = 8.0
+    interval = 0.1
+    lo = 0.0
 
     def __init__(self):
         #self.dfs = equipment_nanten.dfs()
         #self.m4 = equipment_nanten.m4()
         #self.hot = equipment_nanten.hot_load()
+        self.thread = threading.Thread(target=self.loop, daemon=True)
+        self.thread.start()
         pass
 
-    def run(self, initV=0.0, finV=6.0, interval=0.1, lo=0, integ=0.1, fmt='csv'):
+    def loop(self):
+        while True:
+            if self.switch:
+                time.sleep(0.1)
+                self.run(self.initv, self.finv, self.interval, self.lo)
+                self.switch = False
+            else:
+                pass
+            time.sleep(0.1)
+        return
+
+    def subscriber(self, req):
+        self.switch = req.switch
+        self.initv = req.initv
+        self.finv = req.finv
+        self.interval = req.interval
+        self.lo = req.lo
+        return
+
+    def run(self, initv=0.0, finv=6.0, interval=0.1, lo=0, integ=0.1, fmt='csv'):
 
         # Print Welcome massage
         # ---------------------
         print('\n\n'
-              ' =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n'
+              ' =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=c'
               '   N2 RX : SIS Tsys curve Measurement \n'
               ' =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n'
               ' ver - {}\n'
@@ -35,15 +65,12 @@ class Vsweep(object):
 
         # Input value check
         # -----------------
-        repeat = self.input_value_check(initV=initV, finV=finV, interval=interval)
+        repeat = self.input_value_check(initv=initv, finv=finv, interval=interval)
 
         # Set Driver
         # ----------
         self.driver = sis.mixer()
         print('PCI board drivers are set.')
-
-
-        # == Main ========
 
         # Lo attenuator setting
         # ---------------------
@@ -51,7 +78,7 @@ class Vsweep(object):
 
         # Measurement part
         # ----------------
-        result = self.measure(repeat=repeat, initV=initV, interval=interval, integ=integ)
+        result = self.measure(repeat=repeat, initv=initv, interval=interval, integ=integ)
 
         # Calculate Y-Factor and Tsys
         # ---------------------------
@@ -60,9 +87,9 @@ class Vsweep(object):
         # Data saving part
         # ----------------
         datetime = time.strftime('%Y%m%d-%H%M')
-        filename = self.savedir + 'n2sis_vsweep_lo{}mA_{}.{}'.format(lo, datetime, fmt)
+        filepath = os.path.join(self.savedir, 'n2sis_vsweep_lo{}mA_{}.{}'.format(lo, datetime, fmt))
         header = 'DA-V,Vhot,Ihot,Phot1,Phot2,Vcold,Icold,Pcold1,Pcold2,Yfac1,Yfac2,Tsys1,Tsys2'
-        numpy.savetxt(filename, result, fmt='%.5f', header=header, delimiter=',')
+        numpy.savetxt(filepath, result, fmt='%.5f', header=header, delimiter=',')
 
         # Close sis driver
         # ----------------------------
@@ -70,35 +97,35 @@ class Vsweep(object):
 
         # Data loading
         # ------------
-        data = numpy.loadtxt(filename, skiprows=1, delimiter=',')
+        data = numpy.loadtxt(filepath, skiprows=1, delimiter=',')
 
         # Plot part
         # ---------
-        self.ttlplot(data=data, initV=initV, finV=finV, datetime=datetime, lo=lo)
+        self.ttlplot(data=data, initv=initv, finv=finv, datetime=datetime, lo=lo)
         return
 
-    def input_value_check(self, initV, finV, interval):
+    def input_value_check(self, initv, finv, interval):
         Vmix_limit = 30  # [mv]
-        if -Vmix_limit <= initV <= finV <= Vmix_limit:
+        if -Vmix_limit <= initv <= finv <= Vmix_limit:
             pass
         else:
             msg = '{0}\n{1}\n{2}'.format('-- Input Invalid Value Error --',
                                          '    !!! Invalid Voltage !!!',
                                          'Available Voltage: -30 -- 30 [mV]')
             raise ValueError(msg)
-        repeat = int(abs(initV - finV) / interval)
+        repeat = int(abs(initv - finv) / interval)
         return repeat
 
-    def measure(self, repeat, initV=0.0, interval=0.1, ch=1, integ=0.1):
+    def measure(self, repeat, initv=0.0, interval=0.1, integ=0.1):
         # HOT measurement
         # ---------------
         # TODO : HOT IN
-        data_hot = self.sweep_sisv(repeat, initV=initV, interval=interval, integ=integ, pow=3000, col0=True)
+        data_hot = self.sweep_sisv(repeat, initv=initv, interval=interval, integ=integ, pow=3000, col0=True)
 
         # COLD measurement
         # ----------------
         # TODO : HOT OUT, OBS SKY
-        data_sky = self.sweep_sisv(repeat, initV=initV, interval=interval, integ=integ, pow=1400, col0=False)
+        data_sky = self.sweep_sisv(repeat, initv=initv, interval=interval, integ=integ, pow=1400, col0=False)
 
         # data arrangement
         # ----------------
@@ -107,18 +134,17 @@ class Vsweep(object):
         ret = numpy.concatenate((hot_arr, sky_arr), axis=1)
         return ret
 
-    def sweep_sisv(self, repeat, initV=0.0, interval=0.1, integ=0.1, pow=10., col0=True):
+    def sweep_sisv(self, repeat, initv=0.0, interval=0.1, integ=0.1, pow=10., col0=True):
         result = []
 
         for i in range(repeat+1):
             temp = []
-            setV = initV + i * interval
+            setv = initv + i * interval
 
             # bias set
             # --------
-            self.driver.set_sisv(Vmix=setV, ch=0)
-
-            time.sleep(0.2)
+            self.driver.set_sisv(Vmix=setv, ch=0)
+            time.sleep(0.1)
 
             # data receive
             # ------------
@@ -128,7 +154,7 @@ class Vsweep(object):
 
             # data arrangement
             # ----------------
-            if col0 is True: temp.append(setV)
+            if col0 is True: temp.append(setv)
             temp.append(ad[0]*1e+1)      # AD[V] --> bias [mV]
             temp.append(ad[1]*1e+3)    # AD[V] --> current [uA]
             #power = numpy.sum(spec, axis=1)
@@ -153,7 +179,7 @@ class Vsweep(object):
         result = [numpy.append(result[i], t) for i, t in enumerate(Tsys2)]
         return result
 
-    def ttlplot(self, data, initV, finV, lo, datetime):
+    def ttlplot(self, data, initv, finv, lo, datetime):
         fig = matplotlib.pyplot.figure()
         fig.subplots_adjust(right=0.75)
 
@@ -192,7 +218,7 @@ class Vsweep(object):
         if 200 <= max(sisi): Imax = 200
         else: Imax = max(sisi) + 20
 
-        ax1.set_xlim(initV, finV)
+        ax1.set_xlim(initv, finv)
         ax1.set_ylim(50, 400)      # TODO
         t_ax.set_ylim(Imin, Imax)
         p_ax.set_ylim(0, 20000)  # TODO
@@ -213,17 +239,23 @@ class Vsweep(object):
         ax1.grid(which='both', color='gray', ls='--')
         ax1.patch.set_facecolor('lightgray')
         ax1.patch.set_alpha(0.1)
-
-        fig.savefig(self.savedir+'n2sis_vsweep_lo{}mA_{}.png'.format(lo, datetime))
-        fig.show()
+        figpath = os.path.join(self.savedir+'n2sis_vsweep_lo{}mA_{}.png'.format(lo, datetime))
+        fig.savefig(figpath)
         return
 
 
 if __name__ == '__main__':
+    import rospy
+    from NASCORX.msg import sisvsweep_msg
+
+    rospy.init_node('sis-vsweep')
+    rospy.loginfo('ROS_sis-vsweep Start')
     vs = Vsweep()
-    vs.run(initV=0.0, finV=2.0)
+    rospy.Subscriber("sis-iv", sisvsweep_msg, vs.subscriber)
+    rospy.spin()
 
 
 # History
 # -------
 # 2017/12/18 : written by T.Inaba
+# 2017/12/28 T.Inaba : (1) add ROS method.
