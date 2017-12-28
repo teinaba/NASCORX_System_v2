@@ -1,25 +1,27 @@
 #!/usr/bin/env python
 
 # import modules
+import os
 import numpy
 import configparser
 
 
 class Config_handler(object):
     season = None
-    dirpath = '/home/amigos/NASCORX_System-master/NASCORX_System/configuration/'
+    dirpath = None
 
     def __init__(self):
         # Load master configfile
         # ---------------------
         mastercnf = configparser.ConfigParser()
-        mastercnf.read(self.dirpath+'NASCO-master.cnf')
+        self.get_dirpath()
+        mastercnf.read(os.path.join(self.dirpath, 'NASCO-master.cnf'))
 
         # Set directory
         # -------------
         self.season = mastercnf['Configuration']['Season']
         dirname = 'NASCO-{}/'.format(self.season)
-        self.cnfdir = self.dirpath + dirname
+        self.cnfdir = os.path.join(self.dirpath, dirname)
 
         # Set config path
         # ---------------
@@ -27,8 +29,13 @@ class Config_handler(object):
         sysfname = mastercnf['Configuration']['SYS-config']
         self.sis_conf = self.cnfdir + sisfname                                            # sis config
         self.sys_conf = self.cnfdir + sysfname                                            # system config
-        self.device_table = self.dirpath + 'device_table.cnf'                             # device table
+        self.device_table = os.path.join(self.dirpath, 'device_table.cnf')                             # device table
         pass
+
+    def get_dirpath(self):
+        here = os.path.dirname(os.path.abspath(__file__))
+        self.dirpath = os.path.normpath(os.path.join(here, '../', 'configuration'))
+        return
 
     def read(self, file):
         # Set config file --
@@ -56,7 +63,7 @@ class Config_handler(object):
 
     def load_ndev(self, device):
         config = self.read(self.device_table)
-        ndev = str(config[device]['ndev'])
+        ndev = int(config[device]['ndev'])
         return ndev
 
     def load_sis_params(self, ret='dict'):
@@ -170,3 +177,4 @@ class Config_handler(object):
 # -------
 # written by T.Inaba
 # 2017/12/14 T.Inaba: create device table method. add read method.
+# 2017/12/14 T.Inaba: modified (1)path method, (2) device table method.
