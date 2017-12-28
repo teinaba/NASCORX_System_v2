@@ -965,8 +965,7 @@ class multi_box(object):
                 elif 4 <= i <= 7:  # for beam 3-4
                     self.davc2.set_voltage(voltage=Vda[i], ch=i-4)
                 elif 8 <= i <= 11:  # for 230GHz
-                    if 0.0 <= Vmix[i] <= Vmix_Limit:
-                        self.davc3.set_voltage(voltage=Vda[i], ch=i-8)
+                    self.davc3.set_voltage(voltage=Vda[i], ch=i-8)
             elif Vmix[i] is None:
                 pass
             else:
@@ -1250,3 +1249,4 @@ class multi_box(object):
 # 2017/09/18 T.Inaba: changed directory structure, import setting. created __init__.py
 # 2017/09/25 T.Inaba: created multi_box class.
 # 2017/11/02 T.Inaba: change Vmix range(adapt to minus value).
+# 2017/12/23 T.Inaba: debug multi_mixer.set_sisv method.

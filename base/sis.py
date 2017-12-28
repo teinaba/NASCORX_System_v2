@@ -821,8 +821,7 @@ class multi_mixer(object):
                 elif 4 <= i <= 7:  # for beam 3-4
                     self.davc2.set_voltage(voltage=Vda[i], ch=i-4)
                 elif 8 <= i <= 11:  # for 230GHz
-                    if 0.0 <= Vmix[i] <= Vmix_Limit:
-                        self.davc3.set_voltage(voltage=Vda[i], ch=i-8)
+                    self.davc3.set_voltage(voltage=Vda[i], ch=i-8)
             elif Vmix[i] is None:
                 pass
             else:
@@ -1260,8 +1259,7 @@ class multi_box(object):
                 elif 4 <= i <= 7:  # for beam 3-4
                     self.davc2.set_voltage(voltage=Vda[i], ch=i-4)
                 elif 8 <= i <= 11:  # for 230GHz
-                    if 0.0 <= Vmix[i] <= Vmix_Limit:
-                        self.davc3.set_voltage(voltage=Vda[i], ch=i-8)
+                    self.davc3.set_voltage(voltage=Vda[i], ch=i-8)
             elif Vmix[i] is None:
                 pass
             else:
@@ -1547,3 +1545,4 @@ class multi_box(object):
 # 2017/11/02 T.Inaba: change Vmix range(adapt to minus value).
 # 2017/12/04 T.Inaba: (1) delete board search method. instead, (2) add config handler. (3) create box(single) class.
 # 2017/12/18 T.Inaba: modified box class.
+# 2017/12/23 T.Inaba: debug multi_box.set_sisv method.
