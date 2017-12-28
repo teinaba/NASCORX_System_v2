@@ -25,6 +25,7 @@ class Controller(object):
 
     def sis_iv(self, initv=-8.0, finv=8.0, interval=0.1, lo=0.0):
         msg = sisiv_msg()
+        msg.switch = True
         msg.initv = initv
         msg.finv = finv
         msg.interval = interval
@@ -35,6 +36,7 @@ class Controller(object):
 
     def sis_vsweep(self, initv=-8.0, finv=8.0, interval=0.1, lo=0.0, integ=0.1):
         msg = sisvsweep_msg()
+        msg.switch = True
         msg.initv = initv
         msg.finv = finv
         msg.interval = interval
@@ -46,8 +48,9 @@ class Controller(object):
 
     def sis_losweep(self, initi=-8.0, fini=8.0, interval=0.05, sisv=0.0, integ=0.1):
         msg = sisiv_msg()
-        msg.initv = initi
-        msg.finv = fini
+        msg.switch = True
+        msg.initi = initi
+        msg.fini = fini
         msg.interval = interval
         msg.sisv = sisv
         msg.integ = integ
