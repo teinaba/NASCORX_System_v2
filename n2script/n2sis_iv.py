@@ -66,7 +66,7 @@ class IV_curve(object):
 
         # Set Driver
         # ----------
-        self.driver = sis.mixer()
+        self.driver = sis.mixeru()
         print('PCI board drivers are set.')
 
         # Lo setting
