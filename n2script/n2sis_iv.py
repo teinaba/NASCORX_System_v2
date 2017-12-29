@@ -2,11 +2,13 @@
 
 # import modules
 import os
+import sys
 import time
 import numpy
 import threading
 import matplotlib.pyplot
 
+sys.path.append('/home/necst/ros/src/NASCORX')
 from NASCORX_System.base import sis
 
 
