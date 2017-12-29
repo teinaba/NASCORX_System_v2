@@ -17,6 +17,7 @@ from NASCORX.msg import sislosweep_msg
 class Controller(object):
 
     def __init__(self):
+        rospy.init_node('RXcontroller_client')
         # self.pub1 = rospy.Publisher('observation_start_', Bool, queue_size=10)
         self.pub2 = rospy.Publisher('sis_iv', sisiv_msg, queue_size=10)
         self.pub3 = rospy.Publisher('sis_vsweep', sisvsweep_msg, queue_size=10)
