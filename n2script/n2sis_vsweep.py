@@ -248,10 +248,10 @@ if __name__ == '__main__':
     import rospy
     from NASCORX.msg import sisvsweep_msg
 
-    rospy.init_node('sis-vsweep')
+    rospy.init_node('sis_vsweep')
     rospy.loginfo('ROS_sis-vsweep Start')
     vs = Vsweep()
-    rospy.Subscriber("sis-vsweep", sisvsweep_msg, vs.subscriber)
+    rospy.Subscriber("sis_vsweep", sisvsweep_msg, vs.subscriber)
     rospy.spin()
 
 

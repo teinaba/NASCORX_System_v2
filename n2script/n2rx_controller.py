@@ -18,9 +18,9 @@ class Controller(object):
 
     def __init__(self):
         # self.pub1 = rospy.Publisher('observation_start_', Bool, queue_size=10)
-        self.pub2 = rospy.Publisher('sis-iv', sisiv_msg, queue_size=10)
-        self.pub3 = rospy.Publisher('sis-vsweep', sisvsweep_msg, queue_size=10)
-        self.pub4 = rospy.Publisher('sis-losweep', sislosweep_msg, queue_size=10)
+        self.pub2 = rospy.Publisher('sis_iv', sisiv_msg, queue_size=10)
+        self.pub3 = rospy.Publisher('sis_vsweep', sisvsweep_msg, queue_size=10)
+        self.pub4 = rospy.Publisher('sis_losweep', sislosweep_msg, queue_size=10)
         return
 
     def sis_iv(self, initv=-8.0, finv=8.0, interval=0.1, lo=0.0):

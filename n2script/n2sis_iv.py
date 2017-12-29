@@ -164,10 +164,10 @@ if __name__ == '__main__':
     import rospy
     from NASCORX.msg import sisiv_msg
 
-    rospy.init_node('sis-iv')
+    rospy.init_node('sis_iv')
     rospy.loginfo('ROS_sis-iv Start')
     iv = IV_curve()
-    rospy.Subscriber("sis-iv", sisiv_msg, iv.subscriber)
+    rospy.Subscriber("sis_iv", sisiv_msg, iv.subscriber)
     rospy.spin()
 
 # History

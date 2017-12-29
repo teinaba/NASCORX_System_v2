@@ -243,13 +243,14 @@ if __name__ == '__main__':
     import rospy
     from NASCORX.msg import sislosweep_msg
 
-    rospy.init_node('sis-losweep')
+    rospy.init_node('sis_losweep')
     rospy.loginfo('ROS_sis-vlosweep Start')
     lo = Losweep()
-    rospy.Subscriber("sis-losweep", sislosweep_msg, lo.subscriber)
+    rospy.Subscriber("sis_losweep", sislosweep_msg, lo.subscriber)
     rospy.spin()
 
 
 # History
 # -------
 # 2017/12/18 : written by T.Inaba
+# 2017/12/28 T.Inaba : (1) add ROS method.
