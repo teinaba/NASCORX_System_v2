@@ -6,6 +6,9 @@
 from ..device import CPZ3177
 from ..device import CPZ340516
 from ..device import CPZ340816
+from ..device import CPZ3177u
+from ..device import CPZ340516u
+from ..device import CPZ340816u
 from . import config_handler
 config = config_handler.Config_handler()
 
@@ -49,6 +52,200 @@ class mixer(object):
         self.dacc.set_Irange(mode='DA_0_100mA')
         self.ad.set_mode(mode='diff')
         self.ad.set_input_range(Vrange='AD_5V')
+        return
+
+    def close_box(self):
+        """
+        DESCRIPTION
+        ================
+        This function closes the remote connection.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        self.davc.close_board()
+        self.dacc.close_board()
+        self.ad.close_board()
+        return
+
+    def set_sisv(self, Vmix, ch):
+        """
+        DESCRIPTION
+        ================
+        This function sets the mixer bias.
+
+        ARGUMENTS
+        ================
+        1. Vmix: mixer bias [mV]
+            Number: 0 - 50 [mV]
+            Type: float
+            Default: Nothing.
+        2. ch: channel of the SIS mixeres.
+            Number: 0 - 15
+            Type: int
+            Default: Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        Vmix_Limit = 30.0  # mV
+        Vda = (1.0 / 3.0) * float(Vmix)  # mixer bias[mV] --> D/A voltage[V]
+        if -Vmix_Limit <= Vmix <= Vmix_Limit:
+            if 0 <= ch <= 15:
+                self.davc.set_voltage(voltage=Vda, ch=ch)
+                self.davc.set_output(onoff=1)
+            else:
+                msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
+                                             'Invalid ch: {0}'.format(ch),
+                                             'Available ch: 0 -- 15')
+                raise ValueError(msg)
+        else:
+            msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
+                                         'Invalid Voltage: {0} [V]'.format(Vmix),
+                                         'Available Voltage: 0.0 -- {0} [mV]'.format(Vmix_Limit))
+            raise ValueError(msg)
+        return
+
+    def query_sisv(self):
+        """
+        DESCRIPTION
+        ================
+        This function queries the mixer bias.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. Vmix: mixer bias [mV]
+            Type: float list
+        """
+        ret = self.davc.query_voltage()
+        Vmix = list(map(float, ret))
+        return Vmix
+
+    def monitor_sis(self):
+        """
+        DESCRIPTION
+        ================
+        This function queries the mixer monitor voltage.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. voltage: monitor voltage [V]
+            Type: float list
+        """
+        ret = self.ad.query_input()
+        Vmix_mon = list(map(float, ret))
+        return Vmix_mon
+
+    def set_loatt(self, att, ch):
+        """
+        DESCRIPTION
+        ================
+        This function sets the 1st Lo attenuation level.
+
+        ARGUMENTS
+        ================
+        1. att: attenuation level [mA]
+            Number: 0 - 100 [mA]
+            Type: float
+            Default: Nothing.
+        2. ch: channel of the Lo attenuator.
+            Number: 0 - 7
+            Type: int
+            Default: Nothing.
+
+        RETURNS
+        ================
+        Nothing.
+        """
+        if 0.0 <= att <= 100.0:
+            if 0 <= ch <= 7:
+                self.dacc.set_current(current=float(att)*1e-3, ch=ch)
+                self.dacc.set_output(onoff=1)
+            else:
+                msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
+                                             'Invalid ch: {0}'.format(ch),
+                                             'Available ch: 0 -- 7')
+                raise ValueError(msg)
+        else:
+            msg = '{0}\n{1}\n{2}'.format('Input Invalid Value Error',
+                                         'Invalid att: {0} [mA]'.format(att),
+                                         'Available att: 0.0 -- 100.0 [mA]')
+            raise ValueError(msg)
+        return
+
+    def query_loatt(self):
+        """
+        DESCRIPTION
+        ================
+        This function queries the 1st Lo attenuation level.
+
+        ARGUMENTS
+        ================
+        Nothing.
+
+        RETURNS
+        ================
+        1. att: attenuation level [mA]
+            Type: float list
+        """
+        ret = self.dacc.query_current()
+        att = list(map(float, ret))
+        return att
+
+
+class mixeru(object):
+    """
+    DESCRIPTION
+    ================
+    This class controls the SIS mixer.
+
+    ARGUMENTS
+    ================
+    1. sisda: name of the D/A board of SIS mixer registered in the IP_table
+        Type: string
+        Default: 'CPZ340816a'
+    2. loda: name of the D/A board of LO attenuator registered in the IP_table
+        Type: string
+        Default: 'CPZ340516a'
+    3. sisad: name of the A/D board of SIS mixer registered in the IP_table
+        Type: string
+        Default: 'CPZ3177a'
+    """
+
+    def __init__(self, sisda='CPZ340816a', loda='CPZ340516a', sisad='CPZ3177a'):
+        self.initialize(sisda=sisda, loda=loda, sisad=sisad)
+        return
+
+    def initialize(self, sisda, loda, sisad):
+        self.sisda = sisda
+        self.loda = loda
+        self.sisad = sisad
+        # search board number --
+        self.nsisda = config.load_ndev(device=self.sisda)
+        self.nloda = config.load_ndev(device=self.loda)
+        self.nsisad = config.load_ndev(device=self.sisad)
+        # set board control module --
+        self.davc = CPZ340816u.cpz340816u(dev=self.nsisda)
+        self.dacc = CPZ340516u.cpz340516u(dev=self.nloda)
+        self.ad = CPZ3177u.cpz3177u(dev=self.nsisad)
+        # settings --
+        self.dacc.set_Irange(mode='DA_0_100mA')
+        self.ad.set_mode(mode='diff')
+        #self.ad.set_input_range(Vrange='AD_5V')
         return
 
     def close_box(self):
