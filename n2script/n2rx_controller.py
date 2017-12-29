@@ -48,7 +48,7 @@ class Controller(object):
         return
 
     def sis_losweep(self, initi=-8.0, fini=8.0, interval=0.05, sisv=0.0, integ=0.1):
-        msg = sisiv_msg()
+        msg = sislosweep_msg()
         msg.switch = True
         msg.initi = initi
         msg.fini = fini
