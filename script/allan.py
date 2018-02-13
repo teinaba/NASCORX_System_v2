@@ -9,10 +9,9 @@ import numpy
 import threading
 import matplotlib.pyplot
 
-from NASCO_XFFTS import xffts_data_client
+from NASCORX_XFFTS.data_client import data_client
 
-client = xffts_data_client.data_client()
-
+client = data_client()
 
 class allan(object):
     spec = None
@@ -60,10 +59,6 @@ class allan(object):
     def tau_calc(self, repeat, integtime):
         tau = numpy.linspace(1, int(repeat/2) - 1, int(repeat/2) - 1) * integtime
         return tau
-
-    def get_data(self, integtime, repeat):
-        allan_data = 'coming soon'
-        return allan_data
 
     def calc_adev(self, data, integtime):
         repeat = len(data)
