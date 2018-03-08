@@ -2,12 +2,11 @@
 # _*_ coding: UTF-8 _*_
 
 
-#import modules
-import time, sys
 import pyinterface
 
+
 class cpz340816(object):
-    '''
+    """
     DESCRIPTION
     ================
     This class controls the CPZ-340816.
@@ -24,14 +23,14 @@ class cpz340816(object):
     1. dev: device number
         Type: int
         Default: 1
-    '''
+    """
 
     def __init__(self, dev=1):
         self.dev = dev
         self.driver = pyinterface.gpg3300.gpg3300(ndev=self.dev)
 
     def set_voltage(self, voltage=0, ch=None):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the output voltage.
@@ -51,8 +50,8 @@ class cpz340816(object):
         ================
         Nothing.
         """
-        if abs(voltage)<=10.0:
-            if 0<=ch<=15 or ch==None:
+        if abs(voltage) <= 10.0:
+            if 0 <= ch <= 15 or ch is None:
                 self.driver.set_da_value(value=float(voltage), ch=ch)
             else:
                 print('!!!!ERROR!!!!')
@@ -63,7 +62,7 @@ class cpz340816(object):
         return
 
     def query_voltage(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the output voltage.
@@ -81,7 +80,7 @@ class cpz340816(object):
         return ret
 
     def set_output(self, onoff=0):
-        """        
+        """
         DESCRIPTION
         ================
         This function switches the D/A output.
@@ -97,9 +96,9 @@ class cpz340816(object):
         ================
         Nothing.
         """
-        if onoff==1:
+        if onoff == 1:
             self.driver.output()
-        elif onoff==0:
+        elif onoff == 0:
             self.driver.stop_output()
         else:
             print('!!!!ERROR!!!!')
@@ -108,7 +107,7 @@ class cpz340816(object):
         return
 
     def query_output(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the D/A output status.
@@ -123,14 +122,14 @@ class cpz340816(object):
             Type: int (1: ON, 0: OFF)
         """
         ret = self.driver.read_status_output()
-        if ret==True:
+        if ret is True:
             onoff = 1
         else:
             onoff = 0
         return onoff
 
     def close_board(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function close the board connection.
@@ -147,5 +146,5 @@ class cpz340816(object):
         self.driver.close()
         return
 
-#written by K.Urushihara
+# written by K.Urushihara
 # 2017/09/08 T.Inaba: delete sys.path to pyinterface

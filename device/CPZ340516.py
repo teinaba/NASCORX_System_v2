@@ -2,8 +2,8 @@
 # _*_ coding: UTF-8 _*_
 
 
-# import modules
 import pyinterface
+
 
 class cpz340516(object):
     """
@@ -29,7 +29,7 @@ class cpz340516(object):
         self.driver = pyinterface.gpg3300.gpg3300(ndev=dev)
 
     def set_Irange(self, mode='DA_0_100mA', ch=None):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the range of output current.
@@ -70,7 +70,7 @@ class cpz340516(object):
         return
 
     def query_Irange(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the range of output current.
@@ -91,7 +91,7 @@ class cpz340516(object):
         return mode
 
     def set_current(self, current=0, ch=None):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the output current.
@@ -149,7 +149,7 @@ class cpz340516(object):
         return
 
     def query_current(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the output current.
@@ -167,7 +167,7 @@ class cpz340516(object):
         return current
 
     def set_output(self, onoff=0):
-        """        
+        """
         DESCRIPTION
         ================
         This function switches the D/A output.
@@ -194,7 +194,7 @@ class cpz340516(object):
         return
 
     def query_output(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the D/A output status.
@@ -216,7 +216,7 @@ class cpz340516(object):
         return onoff
 
     def close_board(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function close the board connection.

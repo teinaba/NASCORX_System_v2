@@ -2,12 +2,12 @@
 # _*_ coding: UTF-8 _*_
 
 
-#import modules
-import time, sys
+import time
 import pyinterface
 
+
 class cpz7204(object):
-    '''
+    """
     DESCRIPTION
     ================
     This class cntrols the CPZ-7204.
@@ -21,14 +21,14 @@ class cpz7204(object):
     1. dev: device number
         Type: int
         Default: 1
-    '''
+    """
 
     def __init__(self, dev=1):
         self.dev = dev
         self.driver = pyinterface.gpg7204.gpg7204(ndev=self.dev)
 
     def query_position(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the pulse counts.
@@ -46,7 +46,7 @@ class cpz7204(object):
         return cnt
 
     def set_home(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the home position.
@@ -63,7 +63,7 @@ class cpz7204(object):
         return
 
     def go_home(self, speed=1000):
-        """        
+        """
         DESCRIPTION
         ================
         This function moves to the home position.
@@ -86,9 +86,9 @@ class cpz7204(object):
             time.sleep(0.5)
             crrt_pos = self.query_position()
             if crrt_pos == 0:
-                 break
+                break
             else:
-                continue         
+                continue
         return
 
     def rot_angle(self, speed=1000, angle=90):
@@ -120,13 +120,13 @@ class cpz7204(object):
             time.sleep(0.5)
             crrt_pos = self.query_position()
             if crrt_pos == tgt_pos:
-                 break
+                break
             else:
                 continue
         return
 
     def close_board(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function close the board connection.
@@ -142,5 +142,5 @@ class cpz7204(object):
         self.driver.close()
         return 
 
-#written by K.Urushihara
+# written by K.Urushihara
 # 2017/09/08 T.Inaba: delete sys.path to pyinterface

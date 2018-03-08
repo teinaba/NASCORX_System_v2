@@ -1,8 +1,9 @@
 #! /usr/bin/env python
 # _*_ coding: UTF-8 _*_
 
-import time, sys
+
 import pymeasure
+
 
 class a11713a:
     com = pymeasure.gpib_prologix("172.20.0.16", 8)
@@ -26,10 +27,10 @@ class a11713a:
         >>> at.attenuator(5, 5)
         >>> at.attenuator()
         """
-        table1 = ['B1234','A1B234', 'A2B134', 'A12B34', 'A3B124', 
+        table1 = ['B1234', 'A1B234', 'A2B134', 'A12B34', 'A3B124',
                   'A13B24', 'A23B14', 'A123B4', 'A34B12', 'A134B2',
                   'A234B1', 'A1234']
-        table2 = ['B5678','A5B678', 'A6B578', 'A56B78', 'A7B568', 
+        table2 = ['B5678', 'A5B678', 'A6B578', 'A56B78', 'A7B568',
                   'A57B68', 'A67B58', 'A567B8', 'A78B56', 'A578B6',
                   'A678B5', 'A5678']
         self.com.open()

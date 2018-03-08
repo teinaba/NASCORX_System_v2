@@ -2,11 +2,11 @@
 # _*_ coding: UTF-8 _*_
 
 
-#import modules
 import pymeasure
 
+
 class a11713c(object):
-    '''
+    """
     DESCRIPTION
     ================
     This class controls the Agilent 11713C
@@ -19,7 +19,7 @@ class a11713c(object):
     2. port: port number of the 11713C
         Type: int
         Default: 5025
-    '''
+    """
 
     def __init__(self, IP='192.168.100.1', port=5025):
         self.IP = IP
@@ -33,7 +33,7 @@ class a11713c(object):
         return ret
 
     def set_model(self, model, ch):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the model of the programmable attenuator.
@@ -60,17 +60,18 @@ class a11713c(object):
         ================
         Nothing.
         """
+        # TODO:: rewrite-com.send('CONFigure:BANK{}:{} {}'.format(ch[0], ch[1], model))
         modellist = ['NA', 'AG8494g', 'AG8495g', 'AG8495k', 'AG8496g', 'AG8497k',
                      'AG84904k', 'AG84905m', 'AG84906k', 'AG84907k', 'AG84908m']
         if model in modellist:
             self.com.open()
-            if ch=='1X':
+            if ch == '1X':
                 self.com.send('CONFigure:BANK1:X %s' %(model))
-            elif ch=='1Y':
+            elif ch == '1Y':
                 self.com.send('CONFigure:BANK1:Y %s' %(model))
-            elif ch=='2X':
+            elif ch == '2X':
                 self.com.send('CONFigure:BANK2:X %s' %(model))
-            elif ch=='2Y':
+            elif ch == '2Y':
                 self.com.send('CONFigure:BANK2:Y %s' %(model))
             else:
                 print('!!!!ERROR!!!!')
@@ -85,7 +86,7 @@ class a11713c(object):
         return 
 
     def query_model(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the model of the programmable attenuator.
@@ -121,7 +122,7 @@ class a11713c(object):
         return model
 
     def set_level(self, level, ch):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the attenuation level.
@@ -142,15 +143,16 @@ class a11713c(object):
         ================
         Nothing.
         """
-        if level>=0 and type(level)==int:
+        # TODO:: rewrite-com.send('ATTenuator:BANK{}:{} {}'.format(ch[0], ch[1], level))
+        if level >= 0 and type(level) == int:
             self.com.open()
-            if ch=='1X':
+            if ch == '1X':
                 self.com.send('ATTenuator:BANK1:X %s' %(level))
-            elif ch=='1Y':
+            elif ch == '1Y':
                 self.com.send('ATTenuator:BANK1:Y %s' %(level))
-            elif ch=='2X':
+            elif ch == '2X':
                 self.com.send('ATTenuator:BANK2:X %s' %(level))
-            elif ch=='2Y':
+            elif ch == '2Y':
                 self.com.send('ATTenuator:BANK2:Y %s' %(level))
             else:
                 print('!!!!ERROR!!!!')
@@ -164,7 +166,7 @@ class a11713c(object):
         return 
 
     def query_level(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the attenuation level.
@@ -196,7 +198,7 @@ class a11713c(object):
         return level
 
     def set_voltage(self, voltage, bank):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the supply voltage for each bank.
@@ -220,9 +222,9 @@ class a11713c(object):
         vlist = ['OFF', '5V', '15V', '24V', 'USER']
         if voltage in vlist:
             self.com.open()
-            if bank==1:
+            if bank == 1:
                 self.com.send('CONFigure:BANK1 %s' %(voltage))
-            elif bank==2:
+            elif bank == 2:
                 self.com.send('CONFigure:BANK2 %s' %(voltage))
             else:
                 print('!!!!ERROR!!!!')
@@ -237,7 +239,7 @@ class a11713c(object):
         return 
 
     def query_voltage(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the supply voltage for each bank.
@@ -255,34 +257,34 @@ class a11713c(object):
         self.com.send('CONFigure:BANK1?')
         ret1 = self.com.readline()
         ret1 = ret1.replace('\n', '')
-        if ret1=='OFF':
-            bank1='OFF'
-        elif ret1=='P5':
-            bank1='5V'
-        elif ret1=='P15':
-            bank1='15V'
-        elif ret1=='P24':
-            bank1='24V'
-        elif ret1=='USER':
-            bank1='USER'
+        if ret1 == 'OFF':
+            bank1 = 'OFF'
+        elif ret1 == 'P5':
+            bank1 = '5V'
+        elif ret1 == 'P15':
+            bank1 = '15V'
+        elif ret1 == 'P24':
+            bank1 = '24V'
+        elif ret1 == 'USER':
+            bank1 = 'USER'
         else:
-            bank1='UNKNOWN'
+            bank1 = 'UNKNOWN'
         self.com.send('CONFigure:BANK2?')
         ret2 = self.com.readline()
         self.com.close()
         ret2 = ret2.replace('\n', '')
-        if ret2=='OFF':
-            bank2='OFF'
-        elif ret2=='P5':
-            bank2='5V'
-        elif ret2=='P15':
-            bank2='15V'
-        elif ret2=='P24':
-            bank2='24V'
-        elif ret2=='USER':
-            bank2='USER'
+        if ret2 == 'OFF':
+            bank2 = 'OFF'
+        elif ret2 == 'P5':
+            bank2 = '5V'
+        elif ret2 == 'P15':
+            bank2 = '15V'
+        elif ret2 == 'P24':
+            bank2 = '24V'
+        elif ret2 == 'USER':
+            bank2 = 'USER'
         else:
-            bank2='UNKNOWN'
+            bank2 = 'UNKNOWN'
         voltage = [bank1, bank2]
         return voltage
 

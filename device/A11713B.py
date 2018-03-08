@@ -2,8 +2,8 @@
 # _*_ coding: UTF-8 _*_
 
 
-#import modules
 import pymeasure
+
 
 class a11713b(object):
     """
@@ -232,12 +232,12 @@ class a11713b(object):
         self.com.send('CONFigure:BANK1?')
         ret1 = self.com.readline()
         ret1 = ret1.replace('\n', '')
-        if ret1 == 'OFF': bank1 = 'OFF'
+        if ret1 == 'OFF':bank1 = 'OFF'
         elif ret1 == 'P5': bank1 = '5V'
         elif ret1 == 'P15': bank1 = '15V'
         elif ret1 == 'P24': bank1 = '24V'
         elif ret1 == 'USER': bank1 = 'USER'
-        else: bank1='UNKNOWN'
+        else: bank1 = 'UNKNOWN'
 
         voltage = bank1
         return voltage

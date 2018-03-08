@@ -2,8 +2,8 @@
 # _*_ coding: UTF-8 _*_
 
 
-#import modules
 import pymeasure
+
 
 class l218(object):
     """
@@ -83,6 +83,6 @@ class l218(object):
             quit()
         return temp
 
-#written by K.Urushihara
+# written by K.Urushihara
 # 2017/08/29 T.Inaba: delete sys.path to pymeasure
 # 2017/10/23 T.Inaba: add measure method.

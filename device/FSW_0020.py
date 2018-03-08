@@ -1,15 +1,15 @@
 #! /usr/bin/env python
 # _*_ coding: UTF-8 _*_
 
-#import modules
-import time, sys
+
 import pymeasure
 
+
 class fsw_0020(object):
-    '''
+    """
     DESCRIPTION
     ================
-    This class cntrols the FSW0020.
+    This class controls the FSW0020.
 
     ARGUMENTS
     ================
@@ -19,7 +19,7 @@ class fsw_0020(object):
     2. port: port number of the FSW0020
         Type: int
         Default: 10001
-    '''
+    """
 
     def __init__(self, IP='192.168.100.1', port=10001):
         self.IP = IP
@@ -28,7 +28,7 @@ class fsw_0020(object):
         self.sg = pymeasure.Phasematrix.FSW0020(self.com)
 
     def set_freq(self, freq):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the frequency of the SG.
@@ -44,7 +44,7 @@ class fsw_0020(object):
         ================
         Nothing.
         """
-        if 0.5<=freq<=20.0:
+        if 0.5 <= freq <= 20.0:
             self.sg.freq_set(freq, 'GHz')
         else:
             print('!!!!ERROR!!!!')
@@ -53,7 +53,7 @@ class fsw_0020(object):
         return
 
     def query_freq(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the frequency of the SG.
@@ -72,7 +72,7 @@ class fsw_0020(object):
         return freq
 
     def set_power(self, power):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the power of the SG.
@@ -88,7 +88,7 @@ class fsw_0020(object):
         ================
         Nothing.
         """
-        if -10.0<=power<=13.0:
+        if -10.0 <= power <= 13.0:
             self.sg.power_set(power, 'dBm')
         else:
             print('!!!!ERROR!!!!')
@@ -97,7 +97,7 @@ class fsw_0020(object):
         return
     
     def query_power(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the power of the SG.
@@ -115,9 +115,8 @@ class fsw_0020(object):
         power = float(ret)
         return power
 
-
     def set_output(self, onoff=0):
-        """        
+        """
         DESCRIPTION
         ================
         This function switches the RF output.
@@ -133,9 +132,9 @@ class fsw_0020(object):
         ================
         Nothing.
         """
-        if onoff==0:
+        if onoff == 0:
             self.sg.output_set('OFF')
-        elif onoff==1:
+        elif onoff == 1:
             self.sg.output_set('ON')
         else:
             print('!!!!ERROR!!!!')
@@ -144,7 +143,7 @@ class fsw_0020(object):
         return
         
     def query_output(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the output status.
@@ -160,14 +159,14 @@ class fsw_0020(object):
         """
         ret = self.sg.output_query()
         switch = ret.startswith('OFF')
-        if switch==True:
+        if switch is True:
             onoff = 0
         else:
             onoff = 1
         return onoff
 
     def set_ref(self, source='INT'):
-        """        
+        """
         DESCRIPTION
         ================
         This function selects the reference source.
@@ -183,14 +182,14 @@ class fsw_0020(object):
         ================
         Nothing.
         """
-        if source=='EXT':
+        if source == 'EXT':
             self.com.send('ROSC:SOUR EXT')
         else:
             self.com.send('ROSC:SOUR INT')
         return
 
     def query_ref(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the reference sources.
@@ -214,7 +213,7 @@ class fsw_0020(object):
         return ref
 
     def set_refout(self, onoff=0):
-        """        
+        """
         DESCRIPTION
         ================
         This function turns on or off the reference signal output.
@@ -230,14 +229,14 @@ class fsw_0020(object):
         ================
         Nothing.
         """
-        if onoff==1:
+        if onoff == 1:
             self.com.send('OUTP:ROSC:STAT ON')
         else:
             self.com.send('OUTP:ROSC:STAT OFF')
         return
 
     def query_refout(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the reference signal output state.
@@ -254,9 +253,9 @@ class fsw_0020(object):
         self.com.send('OUTP:ROSC:STAT?')
         ret = self.com.readline()
         frag = ret.startswith('OFF')
-        if frag==1:
+        if frag == 1:
             onoff = 0
-        elif frag==0:
+        elif frag == 0:
             onoff = 1
         else:
             print('!!!!ERROR!!!!')
@@ -264,7 +263,7 @@ class fsw_0020(object):
         return onoff
 
     def query_temp(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the temperature.
@@ -286,5 +285,5 @@ class fsw_0020(object):
         temp = float(ret)
         return temp
 
-#written by K.Urushihara
+# written by K.Urushihara
 # 2017/08/29 T.Inaba: delete sys.path for pymeasure

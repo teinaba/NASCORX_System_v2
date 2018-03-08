@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # _*_ coding: UTF-8 _*_
 
-# import modules
+
 import urllib.request
 
 
@@ -21,7 +21,7 @@ class tr71w(object):
     def __init__(self, IP='192.168.100.1'):
         self.IP = IP
         self.url = 'http://'+self.IP+'/B/crrntdata/cdata.txt'
-        
+
     def temp(self):
         """
         DESCRIPTION

@@ -1,15 +1,15 @@
 #! /usr/bin/env python
 # _*_ coding: UTF-8 _*_
 
-#import modules
-import time, sys
+
 import pymeasure
 
+
 class e8257d(object):
-    '''
+    """
     DESCRIPTION
     ================
-    This class cntrols the E8257D.
+    This class controls the E8257D.
 
     ARGUMENTS
     ================
@@ -19,14 +19,14 @@ class e8257d(object):
     2. GPIB: GPIB number of the E8257D
         Type: int
         Default: 1
-    '''
+    """
 
     def __init__(self, IP='192.168.100.1', GPIB=1):
         self.IP = IP
         self.GPIB = GPIB
         
     def set_freq(self, freq, unit='GHz'):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the CW frequency.
@@ -53,7 +53,7 @@ class e8257d(object):
         return
     
     def query_freq(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the CW frequency.
@@ -76,7 +76,7 @@ class e8257d(object):
         return freq
         
     def set_power(self, power=-20.0):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the CW power level.
@@ -93,7 +93,7 @@ class e8257d(object):
         Nothing.
         """
         self.com = pymeasure.gpib_prologix(self.IP, self.GPIB)
-        if -20.0<=power<=30.0:
+        if -20.0 <= power <= 30.0:
             self.com.open()
             self.com.send('POW %f dBm'%(power))
             self.com.close()
@@ -104,7 +104,7 @@ class e8257d(object):
         return
     
     def query_power(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the CW power level.
@@ -127,7 +127,7 @@ class e8257d(object):
         return power
     
     def set_output(self, onoff=0):
-        """        
+        """
         DESCRIPTION
         ================
         This function switches the RF output.
@@ -145,7 +145,7 @@ class e8257d(object):
         """
         self.com = pymeasure.gpib_prologix(self.IP, self.GPIB)
         self.com.open()
-        if onoff==1:
+        if onoff == 1:
             self.com.send('OUTP ON')
         else:
             self.com.send('OUTP OFF')
@@ -153,7 +153,7 @@ class e8257d(object):
         return
         
     def query_output(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the RF output status.
@@ -174,6 +174,6 @@ class e8257d(object):
         self.com.close()
         ret = int(ret)
         return ret
-  
-#written by K.Urushihara
+
+# written by K.Urushihara
 # 2017/08/29 T.Inaba: delete sys.path for pymeasure

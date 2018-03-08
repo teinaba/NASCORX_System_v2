@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # _*_ coding: UTF-8 _*_
 
-#import modules
+
 import time
 import socket
 
@@ -162,9 +162,8 @@ class tpg261(object):
         raw_dec = raw.decode('utf8')
         return 
 
-
     def query_baurate(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the bau rate of the TPG261.
@@ -228,7 +227,6 @@ class tpg261(object):
         raw = self.clientsock.recv(256)
         raw_dec = raw.decode('utf8')
         return
-
 
     def query_gauge(self):
         """

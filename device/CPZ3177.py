@@ -2,12 +2,11 @@
 # _*_ coding: UTF-8 _*_
 
 
-#import modules
-import time, sys
 import pyinterface
 
+
 class cpz3177(object):
-    '''
+    """
     DESCRIPTION
     ================
     This class controls the CPZ-3177.
@@ -23,14 +22,14 @@ class cpz3177(object):
     1. dev: device number
         Type: int
         Default: 1
-    '''
+    """
 
     def __init__(self, dev=1):
         self.dev = dev
         self.driver = pyinterface.gpg3100.gpg3100(ndev=self.dev)
 
     def set_mode(self, mode='single'):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the input mode.
@@ -46,9 +45,9 @@ class cpz3177(object):
         ================
         Nothing.
         """
-        if mode=='single':
+        if mode == 'single':
             self.driver.use_singleend()
-        elif mode=='diff':
+        elif mode == 'diff':
             self.driver.use_differential()
         else:
             print('!!!!ERROR!!!!')
@@ -57,7 +56,7 @@ class cpz3177(object):
         return
 
     def query_mode(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the input mode.
@@ -72,16 +71,16 @@ class cpz3177(object):
             Type: string
         """
         ret = self.driver.read_single_diff()
-        if ret=='AD_INPUT_SINGLE':
+        if ret == 'AD_INPUT_SINGLE':
             mode = 'single'
-        elif ret=='AD_INPUT_DIFF':
+        elif ret == 'AD_INPUT_DIFF':
             mode = 'diff'
         else:
             mode = 'UNKNOWN'
         return mode
 
     def query_input(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the A/D input voltage.
@@ -95,12 +94,12 @@ class cpz3177(object):
         1. voltage: A/D input voltage
             Type: list [V]
         """
-        ret  = self.driver.input()
+        ret = self.driver.input()
         voltage = ret
         return voltage
 
     def set_input_range(self, Vrange='AD_10V'):
-        """        
+        """
         DESCRIPTION
         ================
         This function sets the A/D input range.
@@ -126,7 +125,7 @@ class cpz3177(object):
         return
 
     def query_input_range(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function queries the A/D input range.
@@ -145,7 +144,7 @@ class cpz3177(object):
         return Vrange
 
     def close_board(self):
-        """        
+        """
         DESCRIPTION
         ================
         This function close the board connection.
