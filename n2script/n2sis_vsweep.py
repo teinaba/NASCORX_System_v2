@@ -3,14 +3,17 @@
 # import modules
 # --------------
 import os
+import sys
 import time
 import numpy
 import threading
 import matplotlib.pyplot
 
-#import equipment_nanten
 from NASCORX_System.base import sis
-
+sys.path.append('')
+from NASCORX_XFFTS import xffts_data_client  # TODO: rename
+sys.path.append('')  # TODO : HOT
+# from .. import xx
 
 class Vsweep(object):
     method = 'Trx V sweep Measurement'
@@ -18,6 +21,7 @@ class Vsweep(object):
     savedir = '/home/necst/data/experiment/rx'
     switch = False
     driver = None
+    dfs = None
 
     # parameters --
     initv = - 8.0
@@ -26,9 +30,6 @@ class Vsweep(object):
     lo = 0.0
 
     def __init__(self):
-        #self.dfs = equipment_nanten.dfs()
-        #self.m4 = equipment_nanten.m4()
-        #self.hot = equipment_nanten.hot_load()
         self.thread = threading.Thread(target=self.loop, daemon=True)
         self.thread.start()
         pass
@@ -117,15 +118,17 @@ class Vsweep(object):
         return repeat
 
     def measure(self, repeat, initv=0.0, interval=0.1, integ=0.1):
+        self.dfs = xffts_data_client.data_client()
+        
         # HOT measurement
         # ---------------
         # TODO : HOT IN
-        data_hot = self.sweep_sisv(repeat, initv=initv, interval=interval, integ=integ, pow=3000, col0=True)
+        data_hot = self.sweep_sisv(repeat, initv=initv, interval=interval, integ=integ, idx=True)
 
         # COLD measurement
         # ----------------
         # TODO : HOT OUT, OBS SKY
-        data_sky = self.sweep_sisv(repeat, initv=initv, interval=interval, integ=integ, pow=1400, col0=False)
+        data_sky = self.sweep_sisv(repeat, initv=initv, interval=interval, integ=integ, idx=False)
 
         # data arrangement
         # ----------------
@@ -134,7 +137,7 @@ class Vsweep(object):
         ret = numpy.concatenate((hot_arr, sky_arr), axis=1)
         return ret
 
-    def sweep_sisv(self, repeat, initv=0.0, interval=0.1, integ=0.1, pow=10., col0=True):
+    def sweep_sisv(self, repeat, initv=0.0, interval=0.1, integ=0.5, idx=True):
         result = []
 
         for i in range(repeat+1):
@@ -148,18 +151,16 @@ class Vsweep(object):
 
             # data receive
             # ------------
-            # spec = self.client.oneshot(integtime=integ, repeat=1, start=None)
-            #spec = self.dfs.oneshot(1, integ, 0)
+            ts, unix, pow = self.dfs.conti_oneshot(integtime=integ, repeat=1, start=None)
             ad = self.driver.monitor_sis()
 
             # data arrangement
             # ----------------
-            if col0 is True: temp.append(setv)
+            if idx is True: temp.append(setv)
             temp.append(ad[0]*1e+1)      # AD[V] --> bias [mV]
             temp.append(ad[1]*1e+3)    # AD[V] --> current [uA]
-            #power = numpy.sum(spec, axis=1)
-            temp.append(pow)
-            temp.append(pow)
+            temp.append(pow[0, 0])
+            temp.append(pow[0, 1])
             result.append(temp)
         return result
 
