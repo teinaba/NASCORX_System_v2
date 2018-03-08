@@ -2,5 +2,5 @@
 
 from . import device
 from . import base
-from . import bin
+from . import script
 from . import script
