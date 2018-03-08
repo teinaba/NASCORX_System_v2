@@ -76,6 +76,9 @@ class allan(object):
         allan = numpy.concatenate((numpy.array([tau]), numpy.array([allan_result])), axis=0)
         return allan
 
+    def calc(self, data, integtime):
+        
+
     def fit(self):
         return
 
