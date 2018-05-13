@@ -7,7 +7,7 @@ import matplotlib.pyplot
 
 from NASCORX_System.base import sis
 from NASCORX_System.device import ML2437A
-
+from NASCORX_System.base import Motor
 
 class Losweep(object):
     method = 'Lo sweep Measurement'
@@ -17,7 +17,7 @@ class Losweep(object):
     def __init__(self):
         pass
 
-    def run(self, initI=0.0, finI=2.0, interval=0.05, integ=0.1):
+    def run(self, initI=0.0, finI=2.0, interval=0.05, integ=0.1, hemt=None):
 
         # Print Welcome massage
         # ----------------------
@@ -68,6 +68,22 @@ class Losweep(object):
         self.setup_powermeter()
 
         # == Main ========
+
+        # HEMT setting
+        # ------------
+        if hemt is True:
+            self.driver.set_Vd(voltage=[1.2]*8)
+            self.driver.set_Vg1(voltage=[0.5]*8)
+            self.driver.set_Vg2(voltage=[-0.5]*8)
+        elif hemt is None: pass
+
+        # Lo setting
+        # ----------
+        if lo is None: pass
+        else:
+            _ = [50]*10
+            self.driver.set_loatt(att=_)
+            input('If setting the SG, input Y')
 
         # SIS bias setting
         # ----------------
@@ -123,6 +139,11 @@ class Losweep(object):
         # ---------------
         # TODO : HOT IN
         data_hot = self.sweep_lo(repeat, initI=initI, interval=interval, index=True)
+
+        # HOT --> COLD
+        # ---------------
+        self.chopper = Motor.chopper()
+        self.chopper.rot_chopper()
 
         # COLD measurement
         # ----------------

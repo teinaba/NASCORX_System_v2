@@ -9,7 +9,7 @@ import pymeasure
 from NASCORX_System.base import config_handler
 from NASCORX_System.base import sis
 from NASCORX_System.device import ML2437A
-
+from NASCORX_System.base import Motor
 
 class Vsweep(object):
     method = 'SIS Trx Measurement'
@@ -20,7 +20,7 @@ class Vsweep(object):
     def __init__(self):
         pass
 
-    def run(self, initV=0.0, finV=8.0, interval=0.1, onoff='cnf', lo=[0]*10):
+    def run(self, initV=0.0, finV=8.0, interval=0.1, onoff='cnf', lo=[0]*10, hemt=None):
 
         # Print Welcome massage
         # ----------------------
@@ -83,6 +83,7 @@ class Vsweep(object):
         # -----------------
         repeat = self.input_value_check(initV=initV, finV=finV, interval=interval)
 
+
         """
         # Check available unit
         # --------------------
@@ -102,17 +103,23 @@ class Vsweep(object):
 
         # == Main ========
 
+        # HEMT setting
+        # ------------
+        if hemt is True:
+            self.driver.set_Vd(voltage=[1.2]*8)
+            self.driver.set_Vg1(voltage=[0.5]*8)
+            self.driver.set_Vg2(voltage=[-0.5]*8)
+        elif hemt is None: pass
+
         # Lo setting
         # ----------
         if lo is None: pass
-        else: self.driver.set_loatt(att=lo)
-
-        # HEMT setting
-        # ------------
-        self.driver.set_Vd(voltage=[1.1]*8)
-        self.driver.set_Vg1(voltage=[1.6]*8)
-        self.driver.set_Vg2(voltage=[1.6]*8)
-
+        else:
+            _ = [50]*10
+            self.driver.set_loatt(att=_)
+            input('If setting the SG, input Y')
+            self.driver.set_loatt(att=lo)
+            
         # Measurement part
         # ----------------
         data = self.measure(repeat=repeat, initV=initV, interval=interval, onoff=onoff)
@@ -163,6 +170,11 @@ class Vsweep(object):
         # TODO : HOT IN
         data_hot = self.sweep_sisv(repeat, initV=initV, interval=interval, onoff=onoff, index=True)
 
+        # HOT --> COLD
+        # ---------------
+        self.chopper = Motor.chopper()
+        self.chopper.rot_chopper()
+        
         # SKY measurement
         # ---------------
         # TODO : HOT OUT, OBS SKY
