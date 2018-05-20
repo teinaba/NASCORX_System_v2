@@ -13,7 +13,7 @@ from NASCORX_XFFTS.data_client import data_client
 
 class Vsweep(object):
     method = 'SIS Trx Measurement'
-    ver = '2017.11.09'
+    ver = '2017.05.20'
     BE_num = 16
     savedir = '/home/amigos/NASCORX_Measurement/SIStune/'
 
