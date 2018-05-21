@@ -13,7 +13,7 @@ from NASCORX_XFFTS.data_client import data_client
 
 class Vsweep(object):
     method = 'SIS Trx Measurement'
-    ver = '2017.05.20'
+    ver = '2017.05.21'
     BE_num = 16
     savedir = '/home/amigos/NASCORX_Measurement/SIStune/'
 
@@ -168,6 +168,18 @@ class Vsweep(object):
         data = numpy.concatenate((data, Tsys), axis=0)
         return data
 
+    def input_value_check(self, initV, finV, interval):
+        Vmix_limit = 30  # [mv]
+        if -Vmix_limit <= initV <= finV <= Vmix_limit:
+            pass
+        else:
+            msg = '{0}\n{1}\n{2}'.format('-- Input Invalid Value Error --',
+                                         '    !!! Invalid Voltage !!!',
+                                         'Available Voltage: -30 -- 30 [mV]')
+            raise ValueError(msg)
+        repeat = int(abs(initV - finV) / interval)
+        return repeat
+
     def Trx_plot_oneplot(self, AD_data, initV, finV, datetime):
         fig = matplotlib.pyplot.figure(figsize=(9, 7))
         ax = [fig.add_subplot(3, 4, i+1) for i in range(12)]
@@ -206,17 +218,82 @@ class Vsweep(object):
         fig.show()
         return
 
-    def input_value_check(self, initV, finV, interval):
-        Vmix_limit = 30  # [mv]
-        if -Vmix_limit <= initV <= finV <= Vmix_limit:
-            pass
-        else:
-            msg = '{0}\n{1}\n{2}'.format('-- Input Invalid Value Error --',
-                                         '    !!! Invalid Voltage !!!',
-                                         'Available Voltage: -30 -- 30 [mV]')
-            raise ValueError(msg)
-        repeat = int(abs(initV - finV) / interval)
-        return repeat
+    def Trx_plot(self, sis_v, sis_i, tsys, phot, pcold, if_name, datetime,
+                 labelfs=15, titlefs=12, legendfs=10, legendloc='upper left',
+                 savedir='/home/amigos/'):
+        """
+        DESCRIPTION
+        ===========
+        This method plots a figure of single IF output.
+
+        ARGUMENTS
+        =========
+        1. sis_v      : < Data of SIS-V [mV] : float list : >
+        2. sis_i      : < Data of SIS-I [uA] : float list : >
+        3. tsys       : < Data of Tsys [K] : float list : >
+        4. phot       : < Data of Power of HOT load [Cnt] : float list : >
+        5. pcold      : < Data of Power of Sky [Cnt : float list : >
+        6. if_name    : < Which IF output : str : fmt = "Beam2-LCP" >
+        7. datetime   : < Measurement datetime : str >
+        8. labelfs    : < label font size : int : default=15 : see the official docs of matplotlib >
+        9. titlefs    : < title font size : int : default=12 : same as above >
+        10. legendfs  : < legend font size : int : default=10 : same as above >
+        11. legendloc : < legend location : str : default="upper left" : use - upper, lower, right, left >
+        12. savedir   : < save directory : str : fmt = "/xx/xx/xx/" (end in "/") >
+
+        RETURNS
+        =======
+        Nothing.
+        """
+
+        # declare --
+        fig = matplotlib.pyplot.figure(dpi=100)    # TODO : dpi value
+        fig.subplots_adjust(right=0.77)
+        ax = fig.add_subplot(1, 1, 1)
+        ax2 = ax.twinx()
+        ax3 = ax.twinx()
+        ax2.spines['right'].set_position(('axes', 1.16))
+
+        # plot part --
+        p1, = ax3.plot(sis_v, sis_i, label='SIS-IV', color='black')
+        p2, = ax2.plot(sis_v, phot, label='P-hot', color='red', ls='-')
+        p3, = ax2.plot(sis_v, pcold, label='P-cold', color='blue', ls='-')
+        p4, = ax.plot(sis_v, tsys, label='Tsys', color='green', ls='-')
+        lines = [p1, p2, p3, p4]
+
+        # each settings --
+        ax.set_xlim([sis_v[0], sis_v[-1]])
+        ax.set_ylim([0, 200])    # TODO: ylim
+        ax.set_ylabel('Tsys [K]', fontsize=labelfs)
+        ax.set_xlabel('V [mV]', fontsize=labelfs)
+        ax2.set_ylabel('Power [cnt]', fontsize=labelfs)
+        ax3.set_ylabel('I [uA]', fontsize=labelfs)
+        ax3.set_title('Tsys : {} - {}'.format(if_name, datetime), fontsize=titlefs)
+        ax.grid(which='both', color='gray', linestyle='--')
+        ax.legend(lines, [l.get_label() for l in lines], loc=legendloc, prop={'size': legendfs}, numpoints=1)
+
+        # set label colors --
+        ax.yaxis.label.set_color('green')
+        ax.tick_params(axis='y', colors='green')
+        ax2.yaxis.label.set_color('red')
+        ax2.tick_params(axis='y', colors='red')
+        ax3.yaxis.label.set_color('black')
+        ax3.tick_params(axis='y', colors='black')
+
+        # set background color --
+        ax.patch.set_facecolor('lightgray')
+        ax.patch.set_alpha(0.05)
+
+        figname = savedir + 'Tsys_{}_{}.png'.format(if_name, datetime)
+        fig.savefig(figname)
+        return
+
+    def Trx_plot_v2(self, AD_data, initV, finV, datetime):
+
+
+
+
+        return
 
     def Trx_recofigure(self):
         # get params --
